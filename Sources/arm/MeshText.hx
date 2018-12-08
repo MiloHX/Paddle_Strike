@@ -1,32 +1,55 @@
 package arm;
 
-import iron.object.Object;
+import haxe.ds.Vector;
+import iron.object.MeshObject;
 import iron.Scene;
 import iron.math.Vec4;
+import iron.data.Data;
+import iron.data.MaterialData;
 
 class MeshText {
 	
 	public var text			:String;
+	public var material		:String;
 	public var mesh_names	:Array<String>		= [];
-	public var meshes		:Array<Object>		= [];
+	public var meshes		:Array<MeshObject>	= [];
 	public var position		:Vec4;
 	public var width		:Float;
 	public var scale		:Float;
 
-	public function new(text:String, position:Vec4, scale:Float=1.0, width:Float=0.45) {
-		this.text		= text;
+	public function new(text:String, position:Vec4, scale:Float=1.0, width:Float=0.45, material:String = "") {
+		this.text		= text.toUpperCase();
 		this.scale		= scale;
 		this.position	= position;
 		this.width		= width;
-
-		constructMeshes();
+		this.material	= material;
+		constructMeshes(material);
 	}
 
-	function constructMeshes() {
+	function constructMeshes(material_name:String="") {
 		var name:String = "";
 		for (i in 0...text.length) {
-			if (text.charAt(i) != " ") {
-				name = "Text_" + text.charAt(i);
+			var char = text.charAt(i);
+			if (char != " ") {
+				if (char == "!" ) {
+					name = "Text_Exc";
+				} else if (char == "?") {
+					name = "Text_Que";
+				} else if (char == "$") {
+					name = "Text_Dol";
+				} else if (char == "\"") {
+					name = "Text_Dqu";
+				} else if (char == ",") {
+					name = "Text_Com";
+				} else if (char == ".") {
+					name = "Text_Fst";
+				} else if (char == ";") {
+					name = "Text_Sco";
+				} else if (char == ":") {
+					name = "Text_Col";
+				} else {
+					name = "Text_" + char;
+				}
 			} else {
 				name = "Text_Emp";
 			}
@@ -37,28 +60,21 @@ class MeshText {
 		for (mesh_name in mesh_names) {
 			if (mesh_name != "Text_Emp") {
 				Scene.active.spawnObject(mesh_name, null, function(obj) {
-					obj.transform.scale.set(scale, scale, scale);
-					obj.transform.loc.setFrom(pos);
-					obj.transform.buildMatrix();
-					meshes.push(obj);
+					var msh_obj = cast (obj, MeshObject);
+					msh_obj.transform.scale.set(scale, scale, scale);
+					msh_obj.transform.loc.setFrom(pos);
+					msh_obj.transform.buildMatrix();
+					if (material_name != "") {
+						var msh_mtr:Vector<MaterialData>;
+						Data.getMaterial(Scene.active.raw.name, material_name, function(mat_d:MaterialData){
+							msh_mtr = Vector.fromData([mat_d]);
+						});
+						msh_obj.materials = msh_mtr;
+					}
+					meshes.push(msh_obj);
 				});
 			}
 			pos.x += width*scale;
-		}
-	}
-
-	public function updateMeshes(text:String, ?position:Vec4, ?scale:Float, ?width) {
-		destroyMeshes();
-		this.text		= text;
-		if (position != null)	this.position	= position;	
-		if (scale    != null)	this.scale		= scale;
-		if (width    != null)	this.width		= width;	
-		constructMeshes();
-	}
-
-	public function setVisible(visable:Bool) {
-		for (mesh in meshes) {
-			mesh.visible = visable;
 		}
 	}
 
@@ -68,6 +84,28 @@ class MeshText {
 		}
 		meshes.splice(0, meshes.length);
 		mesh_names.splice(0, mesh_names.length);
+	}
+
+	public function updateMeshes(text:String, ?position:Vec4, ?scale:Float, ?width:Float, ?material:String) {
+		destroyMeshes();
+		this.text		= text;
+		if (position != null)	this.position	= position;	
+		if (scale    != null)	this.scale		= scale;
+		if (width    != null)	this.width		= width;	
+		if (material != null)	this.material	= material;
+		constructMeshes(this.material);
+	}
+
+	public function setMeshMaterial() {
+		for (mesh in meshes) {
+			
+		}
+	}
+
+	public function setVisible(visable:Bool) {
+		for (mesh in meshes) {
+			mesh.visible = visable;
+		}
 	}
 
 }
