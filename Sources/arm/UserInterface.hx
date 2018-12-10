@@ -11,6 +11,8 @@ import iron.system.Time;
 
 class UserInterface {
 
+	static public var t 			:Float;
+
 	static var system				:SystemTrait;
 	static var score_1				:Int		= 0;
 	static var score_2				:Int		= 0;
@@ -20,8 +22,7 @@ class UserInterface {
 	static var title_meshes_title	:MeshText;
 	static var title_meshes_1_player:MeshText;
 	static var title_meshes_2_player:MeshText;
-	static var title_meshes_options	:MeshText;
-	static var titie_meshes_exit	:MeshText;
+	static var title_meshes_exit	:MeshText;
 	static var menu_meshes_title	:MeshText;
 	static var menu_meshes_resume	:MeshText;
 	static var menu_meshes_restart	:MeshText;
@@ -32,15 +33,14 @@ class UserInterface {
 	static var options_meshes_stw_v	:MeshText;
 	static var options_meshes_diff	:MeshText;
 	static var options_meshes_diff_v:MeshText;
-	static var options_meshes_back	:MeshText;
+	static var options_meshes_start	:MeshText;
+	static var options_meshes_cancel:MeshText;
 
 	static var cursor				:MeshObject;
 
 	static var border_up			:MeshObject;
 	static var border_down			:MeshObject;
 	static var separator			:MeshObject;
-
-	static var t 					:Float;
 
 	static var title_cursor_pos		:Int;
 	static var menu_cursor_pos		:Int;
@@ -57,8 +57,7 @@ class UserInterface {
 		title_meshes_title		= new MeshText("ARMORY PONG",   new Vec4(-2.00,  1.0, 1.0), 0.8, 0.5, "MTR_title"  );
 		title_meshes_1_player	= new MeshText("1 PLAYER" ,     new Vec4(-0.70,  0.0, 1.0), 0.4, 0.5, "MTR_option" );
 		title_meshes_2_player	= new MeshText("2 PLAYERS",     new Vec4(-0.70, -0.4, 1.0), 0.4, 0.5, "MTR_option" );
-		title_meshes_options	= new MeshText("OPTIONS",       new Vec4(-0.70, -0.8, 1.0), 0.4, 0.5, "MTR_option" );
-		titie_meshes_exit		= new MeshText("EXIT",          new Vec4(-0.70, -1.4, 1.0), 0.4, 0.5, "MTR_option" );
+		title_meshes_exit		= new MeshText("EXIT",          new Vec4(-0.70, -1.0, 1.0), 0.4, 0.5, "MTR_option" );
 		menu_meshes_title		= new MeshText("PAUSED",        new Vec4(-0.70,  1.0, 1.0), 0.6, 0.5, "MTR_title"  );
 		menu_meshes_resume		= new MeshText("RESUME",        new Vec4(-0.50,  0.0, 1.0), 0.4, 0.5, "MTR_option" );
 		menu_meshes_restart		= new MeshText("RESTART",       new Vec4(-0.50, -0.4, 1.0), 0.4, 0.5, "MTR_option" );
@@ -69,11 +68,39 @@ class UserInterface {
 		options_meshes_stw_v	= new MeshText("10",            new Vec4( 1.20,  0.0, 1.0), 0.4, 0.5, "MTR_setting");
 		options_meshes_diff		= new MeshText("DIFFICULTY:",   new Vec4(-1.50, -0.4, 1.0), 0.4, 0.5, "MTR_option" );
 		options_meshes_diff_v	= new MeshText("NORMAL",        new Vec4( 1.20, -0.4, 1.0), 0.4, 0.5, "MTR_setting");
-		options_meshes_back  	= new MeshText("BACK",          new Vec4(-1.50, -1.0, 1.0), 0.4, 0.5, "MTR_option" );
-		cursor					= Scene.active.getMesh("Cursor");
+		options_meshes_start  	= new MeshText("START",         new Vec4(-1.50, -1.0, 1.0), 0.4, 0.5, "MTR_option" );
+		options_meshes_cancel  	= new MeshText("CANCEL",        new Vec4(-1.50, -1.4, 1.0), 0.4, 0.5, "MTR_option" );
+		cursor					= Scene.active.getMesh("cursor");
 		border_up				= Scene.active.getMesh("border_up");
 		border_down				= Scene.active.getMesh("border_down");
 		separator				= Scene.active.getMesh("separator");
+
+		title_meshes_title   .addAnimation(DROP_IN);
+		title_meshes_1_player.addAnimation(ROLLING, true);
+		title_meshes_1_player.addAnimation(VIBERATING);
+		title_meshes_2_player.addAnimation(ROLLING, true);
+		title_meshes_2_player.addAnimation(VIBERATING);
+		title_meshes_exit    .addAnimation(ROLLING, true);
+		title_meshes_exit    .addAnimation(VIBERATING);
+
+		menu_meshes_resume   .addAnimation(ROLLING, true);
+		menu_meshes_resume   .addAnimation(VIBERATING);
+		menu_meshes_restart  .addAnimation(ROLLING, true);
+		menu_meshes_restart  .addAnimation(VIBERATING);
+		menu_meshes_exit     .addAnimation(ROLLING, true);
+		menu_meshes_exit     .addAnimation(VIBERATING);
+
+		options_meshes_stw   .addAnimation(ROLLING, true);
+		options_meshes_stw   .addAnimation(VIBERATING);
+		options_meshes_diff  .addAnimation(ROLLING, true);
+		options_meshes_diff  .addAnimation(VIBERATING);
+		options_meshes_start .addAnimation(ROLLING, true);
+		options_meshes_start .addAnimation(VIBERATING);
+		options_meshes_cancel.addAnimation(ROLLING, true);
+		options_meshes_cancel.addAnimation(VIBERATING);
+
+		result_meshes_result .addAnimation(DROP_IN);
+		result_meshes_result.animations[0].par_sys.floor = -0.1;
 
 		title_cursor_pos		= 0;
 		menu_cursor_pos			= 0;
@@ -92,6 +119,8 @@ class UserInterface {
 		t = Time.time();
 		cursorRotation();
 
+
+
 		var menu_pushed    = PlayerInput.menu;
 		var confirm_pushed = PlayerInput.confirm;
 		if (system.game_state == IN_GAME) {
@@ -104,57 +133,89 @@ class UserInterface {
 		}
 		
 		if (system.game_state == TITLE) {
+			title_meshes_title   .playAnimations();
+			title_meshes_title   .updateAnimations();
+
+			title_meshes_1_player.updateAnimations();
+			title_meshes_2_player.updateAnimations();
+			title_meshes_exit    .updateAnimations();
+
+			var cursor_moved = false;
+
 			if (PlayerInput.down) {
-				if (title_cursor_pos < 3) {
+				if (title_cursor_pos < 2) {
 					title_cursor_pos++;
 				} else {
 					title_cursor_pos = 0;
 				}
+				cursor_moved = true;
 			}
 			if (PlayerInput.up) {
 				if (title_cursor_pos > 0) {
 					title_cursor_pos--;
 				} else {
-					title_cursor_pos = 3;
+					title_cursor_pos = 2;
 				}
+				cursor_moved = true;
 			}
 
 			switch title_cursor_pos {
-				case 0:		setCursor(true, new Vec4(-1.1,  0.0, 1.0));
-				case 1: 	setCursor(true, new Vec4(-1.1, -0.4, 1.0));
-				case 2: 	setCursor(true, new Vec4(-1.1, -0.8, 1.0));
-				case 3: 	setCursor(true, new Vec4(-1.1, -1.4, 1.0));
-				default:	setCursor(true, new Vec4(-1.1,  0.0, 1.0));
+				case 0:	setCursor(true, new Vec4(-1.1,  0.0, 1.0));
+						if (cursor_moved) {
+							title_meshes_1_player.playAnimations ();
+							title_meshes_2_player.resetAnimations();
+							title_meshes_exit    .resetAnimations();
+						}
+				case 1: setCursor(true, new Vec4(-1.1, -0.4, 1.0));
+						if (cursor_moved) {
+							title_meshes_2_player.playAnimations ();
+							title_meshes_1_player.resetAnimations();
+							title_meshes_exit    .resetAnimations();
+						}
+				case 2: setCursor(true, new Vec4(-1.1, -1.0, 1.0));
+						if (cursor_moved) {
+							title_meshes_exit    .playAnimations ();
+							title_meshes_1_player.resetAnimations();
+							title_meshes_2_player.resetAnimations();
+						}
+
 			}
 			
 			if (confirm_pushed) {
 				confirm_pushed = false;
 				switch title_cursor_pos {
 					case 0:	system.game_type = ONE_PLAYER;
-							system.start_game();
-							switchToInGame();
+							switchToOption();
 					case 1: system.game_type = TWO_PLAYER;
 							system.start_game();
 							switchToInGame();
-					case 2: switchToOption();
-					case 3: System.stop();
+					case 2: System.stop();
 				}
-				title_cursor_pos = 0;	
+				title_cursor_pos = 0;
+				title_meshes_title   .resetAnimations();
+				title_meshes_1_player.resetAnimations();
+				title_meshes_2_player.resetAnimations();
+				title_meshes_exit    .resetAnimations();
 			}
 		}
 
 		if (system.game_state == MENU) {
+			menu_meshes_resume .updateAnimations();
+			menu_meshes_restart.updateAnimations();
+			menu_meshes_exit   .updateAnimations();
 
 			if (menu_pushed) {
 				switchToInGame();
 				menu_pushed = false;
 			} else {
+				var cursor_moved = false;
 				if (PlayerInput.down) {
 					if (menu_cursor_pos < menu_itm_count - 1) {
 						menu_cursor_pos++;
 					} else {
 						menu_cursor_pos = 0;
 					}
+					cursor_moved = true;
 				}
 				if (PlayerInput.up) {
 					if (menu_cursor_pos > 0) {
@@ -162,14 +223,45 @@ class UserInterface {
 					} else {
 						menu_cursor_pos = menu_itm_count - 1;
 					}
+					cursor_moved = true;
 				}
 
 				switch menu_cursor_pos {
 					case 0:		setCursor(true, new Vec4(-0.9,  0.0, 1.0));
-					case 1: 	if (system.game_ongoing)	setCursor(true, new Vec4(-0.9, -0.4, 1.0));
-								else  						setCursor(true, new Vec4(-0.9, -0.6, 1.0));
+								if (system.game_ongoing) {
+									if (cursor_moved) {
+										menu_meshes_resume .playAnimations  ();
+										menu_meshes_restart.resetAnimations();
+										menu_meshes_exit   .resetAnimations();
+									}
+								} else {
+									if (cursor_moved) {
+										menu_meshes_restart.playAnimations ();
+										menu_meshes_exit   .resetAnimations();
+									}							
+								}			
+					case 1: 	if (system.game_ongoing) {
+									setCursor(true, new Vec4(-0.9, -0.4, 1.0));
+									if (cursor_moved) {
+										menu_meshes_restart.playAnimations ();
+										menu_meshes_resume .resetAnimations();
+										menu_meshes_exit   .resetAnimations();
+									}								
+								} else {
+									setCursor(true, new Vec4(-0.9, -0.6, 1.0));
+									if (cursor_moved) {
+										menu_meshes_exit   .playAnimations ();
+										menu_meshes_restart.resetAnimations();
+									}
+								}
 					case 2: 	setCursor(true, new Vec4(-0.9, -1.0, 1.0));
-					default:	setCursor(true, new Vec4(-0.9,  0.0, 1.0));
+								if (cursor_moved) {
+									menu_meshes_exit   .playAnimations ();	
+									menu_meshes_resume .resetAnimations();
+									menu_meshes_restart.resetAnimations();
+								}
+														
+
 				}
 				
 				if (confirm_pushed) {
@@ -194,88 +286,134 @@ class UserInterface {
 						}
 						menu_cursor_pos = 0;					
 					}
+					menu_meshes_resume .resetAnimations();
+					menu_meshes_restart.resetAnimations();
+					menu_meshes_exit   .resetAnimations();
 				}
 
 			}
 		}
 
 		if (system.game_state == RESULT) {
+			result_meshes_result.playAnimations();
+			result_meshes_result.updateAnimations();
+
 			updateScores();
 			if (menu_pushed || confirm_pushed) {
 				menu_pushed    = false;
 				confirm_pushed = false;
 				system.reset();
 				switchToMenu();
+				result_meshes_result.resetAnimations();
 			}
 		}
 
 		if (system.game_state == OPTIONS) {
+			options_meshes_stw   .updateAnimations();
+			options_meshes_diff  .updateAnimations();
+			options_meshes_start .updateAnimations();
+			options_meshes_cancel.updateAnimations();
+
 			if (menu_pushed) {
 				menu_pushed    = false;
 				switchToTitle();
 			} else {
+				var cursor_moved = false;
 				if (PlayerInput.down) {
-					if (options_cursor_pos < 2) {
+					if (options_cursor_pos < 3) {
 						options_cursor_pos++;
 					} else {
 						options_cursor_pos = 0;
 					}
+					cursor_moved = true;
 				}
 				if (PlayerInput.up) {
 					if (options_cursor_pos > 0) {
 						options_cursor_pos--;
 					} else {
-						options_cursor_pos = 2;
+						options_cursor_pos = 3;
 					}
+					cursor_moved = true;
 				}
 
 				switch options_cursor_pos {
 					case 0:		setCursor(true, new Vec4(-1.9,  0.0, 1.0));
+								if (cursor_moved) {
+									options_meshes_stw   .playAnimations();
+									options_meshes_diff  .resetAnimations();
+									options_meshes_cancel.resetAnimations();
+								}
 					case 1: 	setCursor(true, new Vec4(-1.9, -0.4, 1.0));
+								if (cursor_moved) {
+									options_meshes_diff .playAnimations();
+									options_meshes_stw  .resetAnimations();
+									options_meshes_start.resetAnimations();	
+								}							
 					case 2: 	setCursor(true, new Vec4(-1.9, -1.0, 1.0));
-					default:	setCursor(true, new Vec4(-1.9,  0.0, 1.0));
+								if (cursor_moved) {
+									options_meshes_start .playAnimations ();
+									options_meshes_diff  .resetAnimations();
+									options_meshes_cancel.resetAnimations();
+								}
+					case 3: 	setCursor(true, new Vec4(-1.9, -1.4, 1.0));
+								if (cursor_moved) {
+									options_meshes_cancel.playAnimations ();
+									options_meshes_start .resetAnimations();
+									options_meshes_stw   .resetAnimations();
+								}				
 				}
 
 				if (confirm_pushed) {
-					confirm_pushed    = false;
-						switch options_cursor_pos {
-							case 0: if        (system.score_to_win == 10) {
-										system.score_to_win = 15;
-										options_meshes_stw_v.updateMeshes("15");
-									} else if (system.score_to_win == 15) {
-										system.score_to_win = 20;
-										options_meshes_stw_v.updateMeshes("20");
-									} else if (system.score_to_win == 20) {
-										system.score_to_win = 25;
-										options_meshes_stw_v.updateMeshes("25");
-									} else if (system.score_to_win == 25) {
-										system.score_to_win = 30;
-										options_meshes_stw_v.updateMeshes("30");
-									} else if (system.score_to_win == 30) {
-										system.score_to_win = 5;
-										options_meshes_stw_v.updateMeshes("5");
-									} else if (system.score_to_win == 5 ) {
-										system.score_to_win = 10;
-										options_meshes_stw_v.updateMeshes("10");
-									}
-							case 1:	if        (system.difficulty == 0.15) {
-										system.difficulty = 0.08;
-										options_meshes_diff_v.updateMeshes("HARD");
-									} else if (system.difficulty == 0.08) {
-										system.difficulty = 0.00;
-										options_meshes_diff_v.updateMeshes("EXPERT");
-									} else if (system.difficulty == 0.00) {
-										system.difficulty = 0.20;
-										options_meshes_diff_v.updateMeshes("EASY");
-									} else if (system.difficulty == 0.20) {
-										system.difficulty = 0.15;
-										options_meshes_diff_v.updateMeshes("NORMAL");
-									} 
-							case 2: switchToTitle();
-									options_cursor_pos = 0;	
-						}
+					confirm_pushed  	= false;
+					var reset_animation	= false;
+					switch options_cursor_pos {
+						case 0: if        (system.score_to_win == 10) {
+									system.score_to_win = 15;
+									options_meshes_stw_v.updateMeshes("15");
+								} else if (system.score_to_win == 15) {
+									system.score_to_win = 20;
+									options_meshes_stw_v.updateMeshes("20");
+								} else if (system.score_to_win == 20) {
+									system.score_to_win = 25;
+									options_meshes_stw_v.updateMeshes("25");
+								} else if (system.score_to_win == 25) {
+									system.score_to_win = 30;
+									options_meshes_stw_v.updateMeshes("30");
+								} else if (system.score_to_win == 30) {
+									system.score_to_win = 5;
+									options_meshes_stw_v.updateMeshes("5");
+								} else if (system.score_to_win == 5 ) {
+									system.score_to_win = 10;
+									options_meshes_stw_v.updateMeshes("10");
+								}
+						case 1:	if        (system.difficulty == 0.15) {
+									system.difficulty = 0.08;
+									options_meshes_diff_v.updateMeshes("HARD");
+								} else if (system.difficulty == 0.08) {
+									system.difficulty = 0.00;
+									options_meshes_diff_v.updateMeshes("EXPERT");
+								} else if (system.difficulty == 0.00) {
+									system.difficulty = 0.20;
+									options_meshes_diff_v.updateMeshes("EASY");
+								} else if (system.difficulty == 0.20) {
+									system.difficulty = 0.15;
+									options_meshes_diff_v.updateMeshes("NORMAL");
+								} 
+						case 2: system.start_game();
+								switchToInGame();
+								options_cursor_pos = 0;
+								reset_animation = true;
+						case 3: switchToTitle();
+								reset_animation = true;
+								options_cursor_pos = 0;
+					}
+					if (reset_animation) {
+						options_meshes_stw   .resetAnimations();
+						options_meshes_diff  .resetAnimations();
+						options_meshes_cancel.resetAnimations();
+						options_meshes_start .resetAnimations();
+					}
 				}
-
 			}
 
 		}
@@ -374,6 +512,7 @@ class UserInterface {
 
 	static function switchToOption() {
 		system.game_state = OPTIONS;
+		options_cursor_pos = 2;
 		setTitleObjectsVisibility(false);
 		setMenuObjectsVisibility(false);
 		setGameObjectsVisibility(false);
@@ -395,8 +534,7 @@ class UserInterface {
 		title_meshes_title   .setVisible(vis);
 		title_meshes_1_player.setVisible(vis);
 		title_meshes_2_player.setVisible(vis);
-		title_meshes_options .setVisible(vis);
-		titie_meshes_exit    .setVisible(vis);
+		title_meshes_exit    .setVisible(vis);
 	}
 
 	static function setMenuObjectsVisibility(vis:Bool) {
@@ -420,7 +558,8 @@ class UserInterface {
 		options_meshes_stw_v .setVisible(vis);
 		options_meshes_diff  .setVisible(vis);
 		options_meshes_diff_v.setVisible(vis);
-		options_meshes_back  .setVisible(vis);
+		options_meshes_start .setVisible(vis);
+		options_meshes_cancel.setVisible(vis);
 	}
 
 	static function setCursor(vis:Bool, ?pos:Vec4) {
@@ -449,8 +588,7 @@ class UserInterface {
 			if (system.game_state == TITLE) {
 				if (title_cursor_pos == 0 && object.transform.worldy() ==  0.0 ||
 					title_cursor_pos == 1 && object.transform.worldy() == -0.4 ||
-					title_cursor_pos == 2 && object.transform.worldy() == -0.8 ||
-					title_cursor_pos == 3 && object.transform.worldy() == -1.4   ) {
+					title_cursor_pos == 2 && object.transform.worldy() == -1.0  ) {
 					color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);
 				}
 			} else if (system.game_state == MENU) {
@@ -463,7 +601,8 @@ class UserInterface {
 			} else if (system.game_state == OPTIONS) {
 				if (options_cursor_pos == 0 && object.transform.worldy() ==  0.0 ||
 					options_cursor_pos == 1 && object.transform.worldy() == -0.4 ||
-					options_cursor_pos == 2 && object.transform.worldy() == -1.0   ) {
+					options_cursor_pos == 2 && object.transform.worldy() == -1.0 ||
+					options_cursor_pos == 3 && object.transform.worldy() == -1.4   ) {
 					color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);
 				}
 			}

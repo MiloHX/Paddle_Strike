@@ -24,8 +24,8 @@ class PlayerInput {
 	*/
 	static function init() {
 		if (keyboard == null)	keyboard	= Input.getKeyboard();
-		timer_escape    = new Timer(0.3);
-		timer_confirm   = new Timer(0.3);
+		timer_escape    = new Timer(0.2);
+		timer_confirm   = new Timer(0.2);
 		timer_direction = new Timer(0.15);
 
 		init_completed = true;

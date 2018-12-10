@@ -28,7 +28,7 @@ class Utilities {
 	}
 
 
-	public static function checkDigits(number:Int):Int {
+	public static inline function checkDigits(number:Int):Int {
 		if (number < 100000) {
 			if (number < 100) {
 				if (number < 10) {
@@ -66,6 +66,10 @@ class Utilities {
 				}
 			}
 		}
+	}
+
+	public static inline function lerpFloat(a:FastFloat, b:FastFloat, f:FastFloat):FastFloat { 
+  		return (a * (1.0 - f)) + (b * f);
 	}
 
 }

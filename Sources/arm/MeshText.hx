@@ -6,16 +6,18 @@ import iron.Scene;
 import iron.math.Vec4;
 import iron.data.Data;
 import iron.data.MaterialData;
+import arm.MeshTextAnimation;
 
 class MeshText {
 	
 	public var text			:String;
 	public var material		:String;
-	public var mesh_names	:Array<String>		= [];
-	public var meshes		:Array<MeshObject>	= [];
+	public var mesh_names	:Array<String>				= [];
+	public var meshes		:Array<MeshObject>			= [];
 	public var position		:Vec4;
 	public var width		:Float;
 	public var scale		:Float;
+	public var animations	:Array<MeshTextAnimation>	= [];
 
 	public function new(text:String, position:Vec4, scale:Float=1.0, width:Float=0.45, material:String = "") {
 		this.text		= text.toUpperCase();
@@ -76,6 +78,9 @@ class MeshText {
 			}
 			pos.x += width*scale;
 		}
+		for (a in animations) {
+			a.init();
+		}
 	}
 
 	function destroyMeshes() {
@@ -84,6 +89,30 @@ class MeshText {
 		}
 		meshes.splice(0, meshes.length);
 		mesh_names.splice(0, mesh_names.length);
+	}
+
+	public function addAnimation(anim_type:AnimationType, loop:Bool = false) {
+		animations.push(new MeshTextAnimation(this, anim_type, loop));
+	}
+
+	public function resetAnimations() {
+		if (animations.length > 0)	{
+			for (a in animations) a.reset();
+		}
+	}
+
+	public function updateAnimations() {
+		if (animations.length > 0)	{
+			for (a in animations) a.update();
+		}
+	}
+
+	public function playAnimations() {
+		for (a in animations) {
+			if (a.state != PLAYING && a.state != FINISHED) {
+				a.play();
+			}
+		}
 	}
 
 	public function updateMeshes(text:String, ?position:Vec4, ?scale:Float, ?width:Float, ?material:String) {
@@ -96,16 +125,16 @@ class MeshText {
 		constructMeshes(this.material);
 	}
 
-	public function setMeshMaterial() {
-		for (mesh in meshes) {
-			
-		}
-	}
-
 	public function setVisible(visable:Bool) {
 		for (mesh in meshes) {
 			mesh.visible = visable;
 		}
+		for (a in animations) {
+			if (a.par_sys != null && a.par_sys.state != STAND_BY) {
+				a.par_sys.reset();
+			}
+		}
 	}
+
 
 }
