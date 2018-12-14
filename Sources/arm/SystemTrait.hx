@@ -14,6 +14,7 @@ import iron.Trait;
 @:enum abstract GameType(Int) {
 	var ONE_PLAYER	= 0;
 	var TWO_PLAYER	= 1;
+	var CPU_VS_CPU  = 2;
 }
 
 
@@ -39,7 +40,8 @@ class SystemTrait extends Trait {
 
 		notifyOnUpdate(function() {
 			PlayerInput.update();
-			ComputerAI.update();
+			ComputerAIP1.update();
+			ComputerAIP2.update();
 			UserInterface.update();
 		});
 	}
@@ -53,6 +55,7 @@ class SystemTrait extends Trait {
 	}
 
 	public function start_game() {
+		for (p in players)		p.start();
 		game_ongoing = true;
 	}
 
@@ -61,7 +64,6 @@ class SystemTrait extends Trait {
 		if (scores[playerID] >= score_to_win) {
 			winner_ID = playerID;
 			game_ongoing = false;
-			UserInterface.switchToResult();
 		}
 	}
 

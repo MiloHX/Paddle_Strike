@@ -4,7 +4,7 @@ import kha.FastFloat;
 import kha.math.Random;
 import iron.Scene;
 
-class ComputerAI {
+class ComputerAIP2 {
 
 	static public var up			:Bool;
 	static public var down			:Bool;
@@ -32,7 +32,7 @@ class ComputerAI {
 		}
 		timer.update();
 
-		if (system.game_type != ONE_PLAYER)		return;
+		if (system.game_type == TWO_PLAYER)		return;
 
 		var ball_h     = ball.object.transform.worldy();
 		var ball_d     = player_2.object.transform.worldx() - ball.object.transform.worldx();

@@ -1,5 +1,7 @@
 package arm;
 
+import iron.math.Vec4;
+import iron.object.Object;
 import iron.Scene;
 import kha.FastFloat;
 
@@ -7,33 +9,71 @@ import iron.Trait;
 
 class PlayerTrait extends Trait {
 
-	@prop public var player_ID		:Int			= 1;	
+	var system				:SystemTrait;
 
-	var system	:SystemTrait;
-	var playerID:Int;
+	public var player_ID	:Int;
+	public var visual		:Object;
+	public var hitbox_x1	:FastFloat;
+	public var hitbox_x2	:FastFloat;
+	public var hithox_y1	:FastFloat;
+	public var hitbox_y2	:FastFloat;
+	public var speed		:FastFloat = 0.0;
 
-	public var hitbox_x1:FastFloat;
-	public var hitbox_x2:FastFloat;
-	public var hithox_y1:FastFloat;
-	public var hitbox_y2:FastFloat;
-	public var speed:FastFloat = 0.0;
+	public var indicator	:MeshText;
+	var timer				:Timer;
+
+	public var amplitude	:Float			= 0.04;
+	var cur_amp				:Float;
+	var vib_prog			:Float			= 0.2;
+	var ani_playing			:Bool			= false;
 
 	public function new() {
 		super();
 
 		notifyOnInit(function() {
 			system = Scene.active.getTrait(SystemTrait);
-			playerID = system.registerPlayer(this);
+			player_ID = system.registerPlayer(this);
+			visual = Scene.active.getMesh("player_visual_" + player_ID);
+			if (player_ID == 0) {
+				indicator = new MeshText("...PLAYER 1", 
+										visual.transform.loc.clone().add(new Vec4(0.1, 0.24, 0)), 
+										0.2, 0.5, "MTR_indicator");
+			} else if (player_ID == 1) {
+				indicator = new MeshText("PLAYER 2...", 
+										visual.transform.loc.clone().add(new Vec4(-1.1, 0.24, 0)),  
+										0.2, 0.5, "MTR_indicator");
+			}
+
+			if (indicator != null) {
+				indicator.addAnimation(ROLLING, true);
+			}
+			timer  = new Timer(2.0);
+
 			reset();
 		});
 
 		notifyOnUpdate(function() {
 			if (system.game_state == IN_GAME) {
+				timer.update();
 				updateHitbox();
+				updateVisual();
+				updateHitAnimation();
+				updateIndicator();
 				getPlayerSpeed();
 				if (speed != 0.0) movePlayer();
 			}
 		});
+	}
+
+	public function setVisible(vis:Bool) {
+		visual.visible	= vis;
+		if (player_ID == 1 && system.game_type != TWO_PLAYER) {
+			indicator.setVisible(false);
+		} else if (player_ID == 0 && system.game_type == CPU_VS_CPU) {
+			indicator.setVisible(false);
+		} else {
+			indicator.setVisible(vis);
+		}
 	}
 
 	public function reset() {
@@ -41,36 +81,114 @@ class PlayerTrait extends Trait {
 		var pos = object.transform.loc;
 		object.transform.loc.set(pos.x, 0.0, pos.y);
 		object.transform.buildMatrix();
+		cur_amp = amplitude;
+		ani_playing = false;
+		indicator.resetAnimations();
+		if (player_ID == 1 && system.game_type != TWO_PLAYER) {
+			indicator.setVisible(false);
+		} else if (player_ID == 0 && system.game_type == CPU_VS_CPU) {
+			indicator.setVisible(false);
+		} else {
+			indicator.setVisible(true);
+		}
+		timer.reset();
+	}
+
+	public function start() {
+		timer.start();
+		if (indicator != null)	indicator.playAnimations();
+	}
+
+	function updateVisual() {
+		if (!ani_playing) {
+			visual.transform.loc.setFrom(object.transform.loc);
+			visual.transform.buildMatrix();
+		}
 	}
 
 	function updateHitbox() {
-		hitbox_x1 = object.transform.worldx() - object.transform.dim.x/2;
-		hitbox_x2 = object.transform.worldx() + object.transform.dim.x/2;
-		hithox_y1 = object.transform.worldy() - object.transform.dim.y/2 - 0.05;
-		hitbox_y2 = object.transform.worldy() + object.transform.dim.y/2 + 0.05;
+		hitbox_x1 = object.transform.worldx() - object.transform.dim.x/2 - 0.02;
+		hitbox_x2 = object.transform.worldx() + object.transform.dim.x/2 + 0.02;
+		hithox_y1 = object.transform.worldy() - object.transform.dim.y/2 - 0.1;
+		hitbox_y2 = object.transform.worldy() + object.transform.dim.y/2 + 0.1;
+	}
+
+	function updateIndicator() {
+		if (player_ID == 1 && system.game_type != TWO_PLAYER) {
+			
+		} else if (player_ID == 0 && system.game_type == CPU_VS_CPU) {
+
+		} else {
+			if (timer.isRunning()) {
+				if (player_ID == 0) {
+					indicator.updateTransform(visual.transform.loc.clone().add(new Vec4( 0.1, 0.24, 0)));
+				} else {
+					indicator.updateTransform(visual.transform.loc.clone().add(new Vec4(-1.1, 0.24, 0)));
+				}
+				indicator.updateAnimations();
+			} else {
+				indicator.setVisible(false);
+			}
+		}
 	}
 
 	function getPlayerSpeed() {
 		var key_pressed:Bool = false;
 		switch player_ID {
+			case 0:	
+				if (system.game_type == TWO_PLAYER) {
+					if (PlayerInput.key_up_1)	{
+						if (speed < 0.0) {
+							speed = 0.0;
+						} else {
+							speed = speed > 0.1 ? speed : speed += 0.025;
+						}
+						key_pressed = true;
+					}
+					if (PlayerInput.key_down_1)	{
+						if (speed > 0.0) {
+							speed = 0.0;
+						} else {
+							speed = speed < -0.1 ? speed : speed -= 0.025;
+						}
+						key_pressed = true;
+					}
+				} else if (system.game_type == ONE_PLAYER) {
+					if (PlayerInput.key_up_1 || PlayerInput.key_up_2)	{
+						if (speed < 0.0) {
+							speed = 0.0;
+						} else {
+							speed = speed > 0.1 ? speed : speed += 0.025;
+						}
+						key_pressed = true;
+					}
+					if (PlayerInput.key_down_1 || PlayerInput.key_down_2)	{
+						if (speed > 0.0) {
+							speed = 0.0;
+						} else {
+							speed = speed < -0.1 ? speed : speed -= 0.025;
+						}
+						key_pressed = true;
+					}					
+				} else if (system.game_type == CPU_VS_CPU) {
+					if (ComputerAIP1.up)	{
+						if (speed < 0.0) {
+							speed = 0.0;
+						} else {
+							speed = speed > 0.1 ? speed : speed += 0.025;
+						}
+						key_pressed = true;
+					}
+					if (ComputerAIP1.down)	{
+						if (speed > 0.0) {
+							speed = 0.0;
+						} else {
+							speed = speed < -0.1 ? speed : speed -= 0.025;
+						}
+						key_pressed = true;
+					}						
+				}
 			case 1:	
-				if (PlayerInput.key_up_1)	{
-					if (speed < 0.0) {
-						speed = 0.0;
-					} else {
-						speed = speed > 0.1 ? speed : speed += 0.025;
-					}
-					key_pressed = true;
-				}
-				if (PlayerInput.key_down_1)	{
-					if (speed > 0.0) {
-						speed = 0.0;
-					} else {
-						speed = speed < -0.1 ? speed : speed -= 0.025;
-					}
-					key_pressed = true;
-				}
-			case 2:	
 				if (system.game_type == TWO_PLAYER) {
 					if (PlayerInput.key_up_2)	{
 						if (speed < 0.0) {
@@ -88,8 +206,8 @@ class PlayerTrait extends Trait {
 						}
 						key_pressed = true;
 					}
-				} else {
-					if (ComputerAI.up)	{
+				} else if (system.game_type == ONE_PLAYER || system.game_type == CPU_VS_CPU)  {
+					if (ComputerAIP2.up)	{
 						if (speed < 0.0) {
 							speed = 0.0;
 						} else {
@@ -97,7 +215,7 @@ class PlayerTrait extends Trait {
 						}
 						key_pressed = true;
 					}
-					if (ComputerAI.down)	{
+					if (ComputerAIP2.down)	{
 						if (speed > 0.0) {
 							speed = 0.0;
 						} else {
@@ -137,5 +255,23 @@ class PlayerTrait extends Trait {
 		} else {
 			object.transform.translate(0.0, speed, 0.0);
 		} 
+	}
+
+	public function updateHitAnimation() {
+		if (ani_playing) {
+			if (cur_amp > 0.001) {
+				visual.transform.loc.x = object.transform.loc.x + cur_amp * Math.sin(50 * UserInterface.t);
+				visual.transform.loc.y = object.transform.loc.y + cur_amp * Math.sin(20 * UserInterface.t);
+				visual.transform.buildMatrix();
+				cur_amp = Utilities.lerpFloat(cur_amp, 0.0, vib_prog);
+			} else {
+				ani_playing = false;
+			}
+		}
+	}
+
+	public function playHitAnimation(speed:Float) {
+		cur_amp = amplitude * speed * 10;
+		ani_playing = true;
 	}
 }

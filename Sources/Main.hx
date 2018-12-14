@@ -17,7 +17,7 @@ class Main {
             1440,
             1080,
             1,
-            true,
+            false,
             armory.renderpath.RenderPathCreator.get
         );
     }

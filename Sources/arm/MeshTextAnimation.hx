@@ -7,9 +7,10 @@ import iron.math.Quat;
 import iron.math.Vec4;
 
 @:enum abstract AnimationType(Int) {
-	var DROP_IN		= 0;
-	var ROLLING		= 1;
-	var VIBERATING	= 2;
+	var DROP_IN			= 0;
+	var ROLLING			= 1;
+	var VIBERATING		= 2;
+	var SCALING_DOWN	= 3;
 }
 
 @:enum abstract AnimationState(Int) {
@@ -49,8 +50,16 @@ class MeshTextAnimation {
 	var total_angles			:Array<Float>	= [];
 	var rolling_delay_frames	:Array<Int>		= [];
 
-	var amplitude				:Float			= 0.06;
+	public var vib_hori			:Bool			= true;
+	public var vib_vert			:Bool			= false;
+	public var vib_rate			:Float			= 0.2;
+	public var amplitude		:Float			= 0.06;
 	var cur_amp					:Float;
+
+	public var init_scale		:Float			= 2.0;
+	public var scaling_rate		:Float			= 0.1;
+	var cur_scale				:Float;
+
 
 
 	public function new(mesh_text:MeshText, anim_type:AnimationType, loop:Bool = false) {
@@ -90,6 +99,7 @@ class MeshTextAnimation {
 					timer = new Timer(rolling_interval, true);
 				}
 			case VIBERATING:
+			case SCALING_DOWN:
 
 		}
 		reset();
@@ -116,6 +126,9 @@ class MeshTextAnimation {
 				}
 			case VIBERATING:
 				cur_amp   = amplitude;
+			case SCALING_DOWN:
+				cur_scale = init_scale;
+
 		}
 		state = STAND_BY;
 
@@ -208,10 +221,15 @@ class MeshTextAnimation {
 				case VIBERATING:
 					if (cur_amp > 0.001) {
 						for (i in 0...mesh_text.meshes.length) {
-							mesh_text.meshes[i].transform.loc.x = mesh_orig_loc[i].x + cur_amp * Math.sin(20 * UserInterface.t);
+							if (vib_hori) {
+								mesh_text.meshes[i].transform.loc.x = mesh_orig_loc[i].x + cur_amp * Math.sin(20 * UserInterface.t);
+							}
+							if (vib_vert) {
+								mesh_text.meshes[i].transform.loc.y = mesh_orig_loc[i].y + cur_amp * Math.sin(31 * UserInterface.t);
+							}
 							mesh_text.meshes[i].transform.buildMatrix();
 						}
-						cur_amp = Utilities.lerpFloat(cur_amp, 0.0, 0.2);			
+						cur_amp = Utilities.lerpFloat(cur_amp, 0.0, vib_rate);			
 					} else {
 						cur_amp = 0.0;
 						for (i in 0...mesh_text.meshes.length) {
@@ -220,6 +238,27 @@ class MeshTextAnimation {
 						}
 						state = FINISHED;
 					}
+				case SCALING_DOWN:
+					if (cur_scale > 1.01) {
+						for (i in 0...mesh_text.meshes.length) {
+							mesh_text.meshes[i].transform.scale.x = mesh_orig_scl[i].x * cur_scale;
+							mesh_text.meshes[i].transform.scale.y = mesh_orig_scl[i].y * cur_scale;
+							mesh_text.meshes[i].transform.loc.x	  = mesh_orig_loc[i].x + 
+																	i * mesh_text.width  * (cur_scale - 1.0);
+							mesh_text.meshes[i].transform.buildMatrix();
+						}
+						cur_scale = Utilities.lerpFloat(cur_scale, 1.0, scaling_rate);
+					} else {
+						cur_scale = 1.0;
+						for (i in 0...mesh_text.meshes.length) {
+							mesh_text.meshes[i].transform.scale.setFrom(mesh_orig_scl[i]);
+							mesh_text.meshes[i].transform.buildMatrix();
+							mesh_text.meshes[i].transform.loc.x	= mesh_orig_loc[i].x;
+						}
+						state = FINISHED;				
+					}
+
+
 					
 			}
 		} else if (state == FINISHED) {
@@ -237,6 +276,7 @@ class MeshTextAnimation {
 			case ROLLING:
 				timer.start();
 			case VIBERATING:
+			case SCALING_DOWN:
 		}
 	}
 
@@ -286,6 +326,7 @@ class MeshTextAnimation {
 					rolling_delay_frames.push(i*rolling_delay);
 				}
 			case VIBERATING:
+			case SCALING_DOWN:
 		}
 	}
 }

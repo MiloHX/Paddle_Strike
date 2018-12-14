@@ -8,10 +8,18 @@ class PlayerInput {
 	static public var key_down_1		:Bool;
 	static public var key_up_2			:Bool;
 	static public var key_down_2		:Bool;
+
+	static public var key_left_1		:Bool;
+	static public var key_right_1		:Bool;
+	static public var key_left_2		:Bool;
+	static public var key_right_2		:Bool;
+	
 	static public var confirm			:Bool;
 	static public var menu				:Bool;
 	static public var up				:Bool;
 	static public var down				:Bool;
+	static public var left				:Bool;
+	static public var right				:Bool;
 
 	static var keyboard					:Keyboard;				// keybord reference	
 	static var init_completed			:Bool		= false;	// init completed?
@@ -43,16 +51,25 @@ class PlayerInput {
 		key_up_2		= keyboard.down("up");
 		key_down_2		= keyboard.down("down"); 
 
+		key_left_1		= keyboard.down("a");
+		key_right_1		= keyboard.down("d");
+		key_left_2		= keyboard.down("left");
+		key_right_2		= keyboard.down("right");
+
 		if (!timer_direction.isRunning()) {
 			up   = key_up_1   || key_up_2  ;
 			down = key_down_1 || key_down_2;
-			if (up || down) {
+			left = key_left_1 || key_left_2;
+			right= key_right_1|| key_right_2;
+			if (up || down || left || right) {
 				timer_direction.reset();
 				timer_direction.start();
 			}
 		} else {
 			up   = false;
 			down = false;
+			left = false;
+			right= false;
 		}		
 
 		var enter		= keyboard.down("enter");

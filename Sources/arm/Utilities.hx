@@ -1,5 +1,6 @@
 package arm;
 
+import iron.math.Vec4;
 import kha.FastFloat;
 import iron.math.Math;
 import iron.math.Vec2;
@@ -70,6 +71,17 @@ class Utilities {
 
 	public static inline function lerpFloat(a:FastFloat, b:FastFloat, f:FastFloat):FastFloat { 
   		return (a * (1.0 - f)) + (b * f);
+	}
+
+	/**
+	* compare a with b, if x, y, z component difference within margin, 
+	* it will return true. otherwise return false
+	* @param a vec4 to be compared
+	* @param b vec4 to be compared
+	* @return  if difference within margin, return true, otherwise return false
+	**/
+	public static inline function compareMarginVec4(a:Vec4, b:Vec4, margin:FastFloat):Bool {
+		return Math.abs(a.x-b.x) < margin && Math.abs(a.y-b.y) < margin && Math.abs(a.z-b.z) < margin;
 	}
 
 }

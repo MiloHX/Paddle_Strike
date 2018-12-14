@@ -125,6 +125,25 @@ class MeshText {
 		constructMeshes(this.material);
 	}
 
+	public function updateTransform(new_position:Vec4, ?new_scale:Float, ?new_width:Float) {
+		this.position	= new_position;	
+		var pos = position.clone();
+		var scale_updated = false;
+		if (new_scale != null) {
+			this.scale			= new_scale;
+			scale_updated  = true;
+		}
+		if (new_width != null)	this.width = new_width;
+
+		for (m in meshes) {
+			if (scale_updated)	m.transform.scale.set(scale, scale, scale);
+			m.transform.loc.setFrom(pos);
+			m.transform.buildMatrix();
+			pos.x += width*scale;
+		}
+
+	}
+
 	public function setVisible(visable:Bool) {
 		for (mesh in meshes) {
 			mesh.visible = visable;
