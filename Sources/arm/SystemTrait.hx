@@ -9,6 +9,7 @@ import iron.Trait;
 	var IN_GAME 	= 2;
 	var RESULT		= 3;
 	var OPTIONS		= 4;
+	var DISCLAIMER	= 5;
 }
 
 @:enum abstract GameType(Int) {
@@ -23,7 +24,7 @@ class SystemTrait extends Trait {
 	public var border_h 	:Float				= 2.35;
 	public var players		:Array<PlayerTrait>	= [];
 	public var ball			:BallTrait;
-	public var game_state	:GameState			= TITLE;
+	public var game_state	:GameState			= DISCLAIMER;
 	public var scores		:Array<Int>			= [];
 	public var game_type	:GameType			= ONE_PLAYER;
 	public var score_to_win	:Int				= 10;
@@ -36,6 +37,7 @@ class SystemTrait extends Trait {
 
 		notifyOnInit(function() {
 			Random.init(Std.random(10000));
+			SoundPlayer.init();
 		});
 
 		notifyOnUpdate(function() {

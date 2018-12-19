@@ -134,6 +134,10 @@ class PlayerTrait extends Trait {
 
 	function getPlayerSpeed() {
 		var key_pressed:Bool = false;
+		if (system.winner_ID != -1)	{
+			speed = 0.0;
+			return;
+		}
 		switch player_ID {
 			case 0:	
 				if (system.game_type == TWO_PLAYER) {

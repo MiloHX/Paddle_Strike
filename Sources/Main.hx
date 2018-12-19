@@ -1,7 +1,7 @@
 // Auto-generated
 package ;
 class Main {
-    public static inline var projectName = 'Armory_Pong';
+    public static inline var projectName = 'Paddle_Strike';
     public static inline var projectPackage = 'arm';
     public static inline var resolutionSize = 1080;
     public static function main() {
@@ -14,8 +14,8 @@ class Main {
             false,
             true,
             false,
-            1440,
-            1080,
+            1280,
+            960,
             1,
             false,
             armory.renderpath.RenderPathCreator.get

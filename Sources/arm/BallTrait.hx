@@ -19,11 +19,10 @@ class BallTrait extends iron.Trait {
 	var timer				:Timer;
 	var start_scale			:Float			= 4.0;
 	var cool_down_timer		:Timer;
-	var cool_down_time 		:Float			= 0.1;
+	var cool_down_time 		:Float			= 0.2;
 
 	public var hit_player	:Int			= -1;
-
-
+	public var hit_wall		:Bool			= false;
 
 	public var direction	:Vec2 			= new Vec2();
 	public var speed		:Float;
@@ -76,6 +75,7 @@ class BallTrait extends iron.Trait {
 				} else {
 					if(timer.update()) {
 						kickoff = true;
+						SoundPlayer.play(KICK_OFF);
 					} else {
 						var new_scale = 1 + (start_scale - 1) * (timer.time_remain / timer.time_duration);
 						object.transform.scale.set(new_scale, new_scale, new_scale);
@@ -110,6 +110,7 @@ class BallTrait extends iron.Trait {
 		cool_down_timer.reset();
 		if (!score) par_sys.reset();
 		hit_player = -1;
+		hit_wall   = false;
 	}
 
 	function collisionDetection(v:Vec2):Bool {
@@ -121,6 +122,7 @@ class BallTrait extends iron.Trait {
 
 		speedup = false;
 		hit_player = -1;
+		hit_wall   = false;
 
 		// borders		
 		if (y_pos > system.border_h - 0.03) {
@@ -133,6 +135,7 @@ class BallTrait extends iron.Trait {
 					direction.setFrom(Utilities.rotateVec2(direction, Random.getFloatIn(-Math.PI_4*0.1, 0)));
 				}
 				result = true;
+				hit_wall = true;
 			}
 		} else if (y_pos < -system.border_h + 0.03) {
 			if (v.y < 0) {
@@ -144,6 +147,7 @@ class BallTrait extends iron.Trait {
 					direction.setFrom(Utilities.rotateVec2(direction, Random.getFloatIn(0,  Math.PI_4*0.1)));
 				}
 				result = true;
+				hit_wall = true;
 			}
 		}
 		if (result == true)	return result;
@@ -436,13 +440,23 @@ class BallTrait extends iron.Trait {
 	}
 
 	public function playHitEffect() {
+		var factor = Math.pow(speed * 7, 2);
 		if (hit_player != -1) {
 			par_sys.reset();
 			if (hit_player == 0)	par_sys.direction = true;
 			else 					par_sys.direction = false;
 			par_sys.offset.setFrom(object.transform.loc);
-			par_sys.speed_factor = Math.pow(speed * 7, 2) ;
+			par_sys.speed_factor = factor;
 			par_sys.play();
+			if (hit_player == 0) {
+				SoundPlayer.play(BALL_HIT_LEFT, Math.max(factor, 0.5));
+			} else if (hit_player == 1) {
+				SoundPlayer.play(BALL_HIT_RIGHT,  Math.max(factor, 0.5));				
+			}
+		} 
+
+		if (hit_wall) {
+			SoundPlayer.play(BALL_HIT_WALL,  Math.max(factor, 0.5));
 		}
 		par_sys.update();
 		if (par_sys.state == FINISHED) {
