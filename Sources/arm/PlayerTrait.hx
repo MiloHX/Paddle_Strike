@@ -1,5 +1,7 @@
 package arm;
 
+import iron.App;
+import iron.math.Math;
 import iron.math.Vec4;
 import iron.object.Object;
 import iron.Scene;
@@ -26,6 +28,8 @@ class PlayerTrait extends Trait {
 	var cur_amp				:Float;
 	var vib_prog			:Float			= 0.2;
 	var ani_playing			:Bool			= false;
+
+	var window_h			:Float			= 0.0;
 
 	public function new() {
 		super();
@@ -54,6 +58,7 @@ class PlayerTrait extends Trait {
 				indicator.addAnimation(ROLLING, true);
 			}
 			timer  = new Timer(2.0);
+			window_h = App.h();
 
 			reset();
 		});
@@ -65,8 +70,12 @@ class PlayerTrait extends Trait {
 				updateVisual();
 				updateHitAnimation();
 				updateIndicator();
-				getPlayerSpeed();
-				if (speed != 0.0) movePlayer();
+				if (PlayerInput.mouse_moved && player_ID == 0) {
+					movePlayerWithMouse();
+				} else {
+					getPlayerSpeed();
+					if (speed != 0.0) movePlayer();
+				}
 			}
 		});
 	}
@@ -245,6 +254,31 @@ class PlayerTrait extends Trait {
 				speed = temp_speed >= 0.0 ? 0.0 : temp_speed; 						
 			}
 		}
+	}
+
+	public function movePlayerWithMouse() {
+		if (system.winner_ID != -1)	{
+			speed = 0.0;
+			return;
+		}
+		var new_y_pos		:FastFloat = (-PlayerInput.mouse_pointer.y + window_h/2) / window_h * 5.1;
+		var upper_limit		:FastFloat = system.border_h - object.transform.dim.y/2;
+		var lower_limit		:FastFloat = -system.border_h + object.transform.dim.y/2;
+
+		var pos = object.transform.loc;
+		if (new_y_pos > upper_limit) {
+			pos.set(pos.x, upper_limit, pos.z);
+			object.transform.buildMatrix();
+			speed = 0.0;
+		} else if (new_y_pos < lower_limit) {
+			pos.set(pos.x, lower_limit, pos.z);
+			object.transform.buildMatrix();
+			speed = 0.0;
+		} else {
+			pos.set(pos.x, new_y_pos, pos.z);
+			object.transform.buildMatrix();
+			speed = Math.clamp(PlayerInput.mouse_y_speed, -0.1, 0.1);
+		} 
 	}
 
 	public function movePlayer() {

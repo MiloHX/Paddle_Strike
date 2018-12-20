@@ -98,23 +98,23 @@ class UserInterface {
 		game_meshes_score_1 	= new MeshText(Std.string(score_1), new Vec4(-0.7, 1.8, -1.0), 1.0, 0.45, "MTR_score_1");
 		game_meshes_score_2 	= new MeshText(Std.string(score_2), new Vec4( 0.7, 1.8, -1.0), 1.0, 0.45, "MTR_score_2");
 		title_meshes_title		= new MeshText("PADDLE STRIKE", new Vec4(-2.35,  1.0, 1.0), 0.8, 0.5, "MTR_title"  );
-		title_meshes_1_player	= new MeshText("1 PLAYER" ,     new Vec4(-0.70,  0.0, 1.0), 0.4, 0.5, "MTR_option" );
-		title_meshes_2_player	= new MeshText("2 PLAYERS",     new Vec4(-0.70, -0.4, 1.0), 0.4, 0.5, "MTR_option" );
-		title_meshes_cpuvscpu	= new MeshText("CPU v CPU",     new Vec4(-0.70, -0.8, 1.0), 0.4, 0.5, "MTR_option" );
-		title_meshes_exit		= new MeshText("EXIT",          new Vec4(-0.70, -1.4, 1.0), 0.4, 0.5, "MTR_option" );
+		title_meshes_1_player	= new MeshText("1 PLAYER" ,     new Vec4(-0.70,  0.0, 1.0), 0.4, 0.5, "MTR_option", true);
+		title_meshes_2_player	= new MeshText("2 PLAYERS",     new Vec4(-0.70, -0.4, 1.0), 0.4, 0.5, "MTR_option", true);
+		title_meshes_cpuvscpu	= new MeshText("CPU v CPU",     new Vec4(-0.70, -0.8, 1.0), 0.4, 0.5, "MTR_option", true);
+		title_meshes_exit		= new MeshText("EXIT",          new Vec4(-0.70, -1.4, 1.0), 0.4, 0.5, "MTR_option", true);
 		menu_meshes_title		= new MeshText("PAUSED",        new Vec4(-0.70,  1.0, 1.0), 0.6, 0.5, "MTR_title"  );
-		menu_meshes_resume		= new MeshText("RESUME",        new Vec4(-0.50,  0.0, 1.0), 0.4, 0.5, "MTR_option" );
-		menu_meshes_restart		= new MeshText("RESTART",       new Vec4(-0.50, -0.4, 1.0), 0.4, 0.5, "MTR_option" );
-		menu_meshes_exit		= new MeshText("QUIT",          new Vec4(-0.50, -1.0, 1.0), 0.4, 0.5, "MTR_option" );
+		menu_meshes_resume		= new MeshText("RESUME",        new Vec4(-0.50,  0.0, 1.0), 0.4, 0.5, "MTR_option", true);
+		menu_meshes_restart		= new MeshText("RESTART",       new Vec4(-0.50, -0.4, 1.0), 0.4, 0.5, "MTR_option", true);
+		menu_meshes_exit		= new MeshText("QUIT",          new Vec4(-0.50, -1.0, 1.0), 0.4, 0.5, "MTR_option", true);
 		result_meshes_result	= new MeshText("RESULT",        new Vec4(-2.00,  1.0, 1.0), 0.8, 0.5, "MTR_title"  );
 		result_meshes_enter		= new MeshText("PRESS ENTER",	new Vec4(-1.00, -0.8, 1.0), 0.4, 0.5, "MTR_tips"   );
 		options_meshes_title	= new MeshText("OPTIONS",       new Vec4(-0.90,  1.0, 1.0), 0.6, 0.5, "MTR_title"  );
-		options_meshes_stw		= new MeshText("SCORE TO WIN:", new Vec4(-1.50,  0.0, 1.0), 0.4, 0.5, "MTR_option" );
+		options_meshes_stw		= new MeshText("SCORE TO WIN:", new Vec4(-1.50,  0.0, 1.0), 0.4, 0.5, "MTR_option", true);
 		options_meshes_stw_v	= new MeshText("10",            new Vec4( 1.20,  0.0, 1.0), 0.4, 0.5, "MTR_setting");
-		options_meshes_diff		= new MeshText("DIFFICULTY:",   new Vec4(-1.50, -0.4, 1.0), 0.4, 0.5, "MTR_option" );
+		options_meshes_diff		= new MeshText("DIFFICULTY:",   new Vec4(-1.50, -0.4, 1.0), 0.4, 0.5, "MTR_option", true);
 		options_meshes_diff_v	= new MeshText("NORMAL",        new Vec4( 1.20, -0.4, 1.0), 0.4, 0.5, "MTR_setting");
-		options_meshes_start  	= new MeshText("START",         new Vec4(-1.50, -1.0, 1.0), 0.4, 0.5, "MTR_option" );
-		options_meshes_cancel  	= new MeshText("CANCEL",        new Vec4(-1.50, -1.4, 1.0), 0.4, 0.5, "MTR_option" );
+		options_meshes_start  	= new MeshText("START",         new Vec4(-1.50, -1.0, 1.0), 0.4, 0.5, "MTR_option", true);
+		options_meshes_cancel  	= new MeshText("CANCEL",        new Vec4(-1.50, -1.4, 1.0), 0.4, 0.5, "MTR_option", true);
 
 		disclaimer_1			= new MeshText("THIS GAME IS CREATED FOR LEARNING AND",        
 												new Vec4(-2.60,  1.0, 1.0), 0.3, 0.5, "MTR_tips" );
@@ -202,7 +202,7 @@ class UserInterface {
 		var confirm_pushed = PlayerInput.confirm;
 
 		if (system.game_state == DISCLAIMER) {
-			if (timer_disc.update() || confirm_pushed) {
+			if (timer_disc.update() || confirm_pushed || PlayerInput.mouse_left) {
 				if (confirm_pushed) {
 					confirm_pushed = false;
 					SoundPlayer.play(MENU_PUSH);
@@ -258,21 +258,50 @@ class UserInterface {
 
 			var cursor_moved = false;
 
-			if (PlayerInput.down) {
-				if (title_cursor_pos < 3) {
-					title_cursor_pos++;
-				} else {
-					title_cursor_pos = 0;
+			var mouse_hovered = false;
+
+			if (title_meshes_1_player.checkHovered()) {
+				if (PlayerInput.mouse_moved && title_cursor_pos != 0) {
+					title_cursor_pos =  0;
+					cursor_moved = true;
 				}
-				cursor_moved = true;
+				mouse_hovered = true;
+			} else if (title_meshes_2_player.checkHovered()) {
+				if (title_cursor_pos != 1 && PlayerInput.mouse_moved) {
+					title_cursor_pos =  1;
+					cursor_moved = true;
+				}
+				mouse_hovered = true;
+			} else if (title_meshes_cpuvscpu.checkHovered()) {
+				if (title_cursor_pos != 2 && PlayerInput.mouse_moved) {
+					title_cursor_pos =  2;
+					cursor_moved = true;
+				}
+				mouse_hovered = true;
+			} else if (title_meshes_exit.checkHovered()) {
+				if (title_cursor_pos != 3 && PlayerInput.mouse_moved) {
+					title_cursor_pos =  3;
+					cursor_moved = true;
+				}
+				mouse_hovered = true;
 			}
-			if (PlayerInput.up) {
-				if (title_cursor_pos > 0) {
-					title_cursor_pos--;
-				} else {
-					title_cursor_pos = 3;
+			if (!cursor_moved) {
+				if (PlayerInput.down) {
+					if (title_cursor_pos < 3) {
+						title_cursor_pos++;
+					} else {
+						title_cursor_pos = 0;
+					}
+					cursor_moved = true;
 				}
-				cursor_moved = true;
+				if (PlayerInput.up) {
+					if (title_cursor_pos > 0) {
+						title_cursor_pos--;
+					} else {
+						title_cursor_pos = 3;
+					}
+					cursor_moved = true;
+				}
 			}
 			if (cursor_moved) {
 				SoundPlayer.play(MENU_HOVER);
@@ -306,7 +335,7 @@ class UserInterface {
 
 			}
 			
-			if (confirm_pushed) {
+			if (confirm_pushed || mouse_hovered && PlayerInput.mouse_left) {
 				SoundPlayer.play(MENU_PUSH);
 				confirm_pushed = false;
 				switch title_cursor_pos {
@@ -338,21 +367,59 @@ class UserInterface {
 				menu_pushed = false;
 			} else {
 				var cursor_moved = false;
-				if (PlayerInput.down) {
-					if (menu_cursor_pos < menu_itm_count - 1) {
-						menu_cursor_pos++;
-					} else {
-						menu_cursor_pos = 0;
+				var mouse_hovered = false;
+
+				if (menu_meshes_resume.checkHovered()) {
+					if (menu_cursor_pos != 0 && PlayerInput.mouse_moved) {
+						menu_cursor_pos =  0;
+						cursor_moved = true;
 					}
-					cursor_moved = true;
-				}
-				if (PlayerInput.up) {
-					if (menu_cursor_pos > 0) {
-						menu_cursor_pos--;
+					mouse_hovered = true;					
+				} else if (menu_meshes_restart.checkHovered()) {
+					if (system.game_ongoing) {
+						if (menu_cursor_pos != 1 && PlayerInput.mouse_moved) {
+							menu_cursor_pos =  1;
+							cursor_moved = true;
+						}
 					} else {
-						menu_cursor_pos = menu_itm_count - 1;
+						if (menu_cursor_pos != 0 && PlayerInput.mouse_moved) {
+							menu_cursor_pos =  0;
+							cursor_moved = true;
+						}						
 					}
-					cursor_moved = true;
+					mouse_hovered = true;						
+				} else if (menu_meshes_exit.checkHovered()) {
+					if (system.game_ongoing) {
+						if (menu_cursor_pos != 2 && PlayerInput.mouse_moved) {
+							menu_cursor_pos =  2;
+							cursor_moved = true;
+						}
+					} else {
+						if (menu_cursor_pos != 1 && PlayerInput.mouse_moved) {
+							menu_cursor_pos =  1;
+							cursor_moved = true;
+						}						
+					}
+					mouse_hovered = true;				
+				} 
+				
+				if (!cursor_moved) {
+					if (PlayerInput.down) {
+						if (menu_cursor_pos < menu_itm_count - 1) {
+							menu_cursor_pos++;
+						} else {
+							menu_cursor_pos = 0;
+						}
+						cursor_moved = true;
+					}
+					if (PlayerInput.up) {
+						if (menu_cursor_pos > 0) {
+							menu_cursor_pos--;
+						} else {
+							menu_cursor_pos = menu_itm_count - 1;
+						}
+						cursor_moved = true;
+					}
 				}
 				if (cursor_moved) {
 					SoundPlayer.play(MENU_HOVER);
@@ -396,7 +463,7 @@ class UserInterface {
 
 				}
 				
-				if (confirm_pushed) {
+				if (confirm_pushed || mouse_hovered && PlayerInput.mouse_left) {
 					SoundPlayer.play(MENU_PUSH);
 					confirm_pushed = false;
 					if (system.game_ongoing) {
@@ -443,7 +510,7 @@ class UserInterface {
 				result_meshes_enter.playAnimations();
 				result_meshes_enter.updateAnimations();
 
-				if (confirm_pushed) {
+				if (confirm_pushed || PlayerInput.mouse_left) {
 					SoundPlayer.play(MENU_PUSH);
 					confirm_pushed = false;
 					system.reset();
@@ -465,22 +532,67 @@ class UserInterface {
 				menu_pushed    = false;
 				switchToTitle();
 			} else {
-				var cursor_moved = false;
-				if (PlayerInput.down) {
-					if (options_cursor_pos < option_itm_count - 1) {
-						options_cursor_pos++;
-					} else {
-						options_cursor_pos = 0;
+				var cursor_moved  = false;
+				var mouse_hovered = false;
+				var mouse_hovered_lr = false;
+				if (options_meshes_stw.checkHovered()) {
+					if (options_cursor_pos != 0 && PlayerInput.mouse_moved) {
+						options_cursor_pos =  0;
+						cursor_moved = true;
 					}
-					cursor_moved = true;
-				}
-				if (PlayerInput.up) {
-					if (options_cursor_pos > 0) {
-						options_cursor_pos--;
-					} else {
-						options_cursor_pos = option_itm_count - 1;
+					mouse_hovered = true;	
+					mouse_hovered_lr = true;			
+				} else if (options_meshes_diff.checkHovered()) {
+					if (options_cursor_pos != 1 && PlayerInput.mouse_moved) {
+						options_cursor_pos =  1;
+						cursor_moved = true;
 					}
-					cursor_moved = true;
+					mouse_hovered = true;
+					mouse_hovered_lr = true;				
+				} else if (options_meshes_start.checkHovered()) {
+					if (system.game_type != TWO_PLAYER) {
+						if (options_cursor_pos != 2 && PlayerInput.mouse_moved) {
+							options_cursor_pos =  2;
+							cursor_moved = true;
+						}
+					} else {
+						if (options_cursor_pos != 1 && PlayerInput.mouse_moved) {
+							options_cursor_pos =  1;
+							cursor_moved = true;
+						}						
+					}
+					mouse_hovered = true;	
+				} else if (options_meshes_cancel.checkHovered()) {
+					if (system.game_type != TWO_PLAYER) {
+						if (options_cursor_pos != 3 && PlayerInput.mouse_moved) {
+							options_cursor_pos =  3;
+							cursor_moved = true;
+						}
+					} else {
+						if (options_cursor_pos != 2 && PlayerInput.mouse_moved) {
+							options_cursor_pos =  2;
+							cursor_moved = true;
+						}						
+					}
+					mouse_hovered = true;	
+				} 
+				if (!cursor_moved) {
+					if (PlayerInput.down) {
+						if (options_cursor_pos < option_itm_count - 1) {
+							options_cursor_pos++;
+						} else {
+							options_cursor_pos = 0;
+						}
+						cursor_moved = true;
+					}
+					if (PlayerInput.up) {
+						if (options_cursor_pos > 0) {
+							options_cursor_pos--;
+						} else {
+							options_cursor_pos = option_itm_count - 1;
+						}
+						cursor_moved = true;
+					}
 				}
 				if (cursor_moved) {
 					SoundPlayer.play(MENU_HOVER);
@@ -541,115 +653,117 @@ class UserInterface {
 								}			
 				}
 
-				if (PlayerInput.left) {
-					SoundPlayer.play(MENU_PUSH);
-					if (options_cursor_pos == 0) {
-						if (system.score_to_win == 10) {
-							system.score_to_win = 5;
-							options_meshes_stw_v.updateMeshes("5");
-						} else if (system.score_to_win == 5 ) {
-							system.score_to_win = 30;
-							options_meshes_stw_v.updateMeshes("30");
-						} else if (system.score_to_win == 30 ) {
-							system.score_to_win = 25;
-							options_meshes_stw_v.updateMeshes("25");
-						} else if (system.score_to_win == 25 ) {
-							system.score_to_win = 20;
-							options_meshes_stw_v.updateMeshes("20");
-						} else if (system.score_to_win == 20 ) {
-							system.score_to_win = 15;
-							options_meshes_stw_v.updateMeshes("15");
-						} else if (system.score_to_win == 15 ) {
-							system.score_to_win = 10;
-							options_meshes_stw_v.updateMeshes("10");
+				if (options_cursor_pos == 0 || options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
+					if (PlayerInput.left || mouse_hovered_lr && PlayerInput.mouse_left) {
+						SoundPlayer.play(MENU_PUSH);
+						if (options_cursor_pos == 0) {
+							if (system.score_to_win == 10) {
+								system.score_to_win = 5;
+								options_meshes_stw_v.updateMeshes("5");
+							} else if (system.score_to_win == 5 ) {
+								system.score_to_win = 30;
+								options_meshes_stw_v.updateMeshes("30");
+							} else if (system.score_to_win == 30 ) {
+								system.score_to_win = 25;
+								options_meshes_stw_v.updateMeshes("25");
+							} else if (system.score_to_win == 25 ) {
+								system.score_to_win = 20;
+								options_meshes_stw_v.updateMeshes("20");
+							} else if (system.score_to_win == 20 ) {
+								system.score_to_win = 15;
+								options_meshes_stw_v.updateMeshes("15");
+							} else if (system.score_to_win == 15 ) {
+								system.score_to_win = 10;
+								options_meshes_stw_v.updateMeshes("10");
+							}
+							options_meshes_stw_v.playAnimations();
+						} else if (options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
+							if        (system.difficulty == 0.15) {
+								system.difficulty        = 0.20;
+								system.ball.init_speed   = 0.045;
+								system.ball.speed_limit  = 0.060;
+								system.ball.speed_factor = 0.15;
+								options_meshes_diff_v.updateMeshes("EASY");
+							} else if (system.difficulty == 0.20) {
+								system.difficulty        = 0.00;
+								system.ball.init_speed   = 0.06;
+								system.ball.speed_limit  = 0.10;
+								system.ball.speed_factor = 0.30;
+								options_meshes_diff_v.updateMeshes("EXPERT");
+							} else if (system.difficulty == 0.00) {
+								system.difficulty        = 0.08;
+								system.ball.init_speed   = 0.055;
+								system.ball.speed_limit  = 0.085;
+								system.ball.speed_factor = 0.25;
+								options_meshes_diff_v.updateMeshes("HARD");
+							} else if (system.difficulty == 0.08) {
+								system.difficulty        = 0.15;
+								system.ball.init_speed   = 0.05;
+								system.ball.speed_limit  = 0.075;
+								system.ball.speed_factor = 0.20;
+								options_meshes_diff_v.updateMeshes("NORMAL");
+							}
+							options_meshes_diff_v.playAnimations();
 						}
-						options_meshes_stw_v.playAnimations();
-					} else if (options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
-						if        (system.difficulty == 0.15) {
-							system.difficulty        = 0.20;
-							system.ball.init_speed   = 0.045;
-							system.ball.speed_limit  = 0.060;
-							system.ball.speed_factor = 0.15;
-							options_meshes_diff_v.updateMeshes("EASY");
-						} else if (system.difficulty == 0.20) {
-							system.difficulty        = 0.00;
-							system.ball.init_speed   = 0.06;
-							system.ball.speed_limit  = 0.10;
-							system.ball.speed_factor = 0.30;
-							options_meshes_diff_v.updateMeshes("EXPERT");
-						} else if (system.difficulty == 0.00) {
-							system.difficulty        = 0.08;
-							system.ball.init_speed   = 0.055;
-							system.ball.speed_limit  = 0.085;
-							system.ball.speed_factor = 0.25;
-							options_meshes_diff_v.updateMeshes("HARD");
-						} else if (system.difficulty == 0.08) {
-							system.difficulty        = 0.15;
-							system.ball.init_speed   = 0.05;
-							system.ball.speed_limit  = 0.075;
-							system.ball.speed_factor = 0.20;
-							options_meshes_diff_v.updateMeshes("NORMAL");
+					}
+
+					if (PlayerInput.right || confirm_pushed || mouse_hovered_lr && PlayerInput.mouse_right) {
+						SoundPlayer.play(MENU_PUSH);
+						if (options_cursor_pos == 0) {
+							if (confirm_pushed)	confirm_pushed = false;
+							if        (system.score_to_win == 10) {
+								system.score_to_win = 15;
+								options_meshes_stw_v.updateMeshes("15");
+							} else if (system.score_to_win == 15) {
+								system.score_to_win = 20;
+								options_meshes_stw_v.updateMeshes("20");
+							} else if (system.score_to_win == 20) {
+								system.score_to_win = 25;
+								options_meshes_stw_v.updateMeshes("25");
+							} else if (system.score_to_win == 25) {
+								system.score_to_win = 30;
+								options_meshes_stw_v.updateMeshes("30");
+							} else if (system.score_to_win == 30) {
+								system.score_to_win = 5;
+								options_meshes_stw_v.updateMeshes("5");
+							} else if (system.score_to_win == 5 ) {
+								system.score_to_win = 10;
+								options_meshes_stw_v.updateMeshes("10");
+							}
+							options_meshes_stw_v.playAnimations();
+						} else if (options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
+							if (confirm_pushed)		confirm_pushed = false;
+							if        (system.difficulty == 0.15) {
+								system.difficulty        = 0.08;
+								system.ball.init_speed   = 0.055;
+								system.ball.speed_limit  = 0.085;
+								system.ball.speed_factor = 0.25;
+								options_meshes_diff_v.updateMeshes("HARD");
+							} else if (system.difficulty == 0.08) {
+								system.difficulty        = 0.00;
+								system.ball.init_speed   = 0.06;
+								system.ball.speed_limit  = 0.10;
+								system.ball.speed_factor = 0.30;
+								options_meshes_diff_v.updateMeshes("EXPERT");
+							} else if (system.difficulty == 0.00) {
+								system.difficulty        = 0.20;
+								system.ball.init_speed   = 0.045;
+								system.ball.speed_limit  = 0.060;
+								system.ball.speed_factor = 0.15;
+								options_meshes_diff_v.updateMeshes("EASY");
+							} else if (system.difficulty == 0.20) {
+								system.difficulty        = 0.15;
+								system.ball.init_speed   = 0.05;
+								system.ball.speed_limit  = 0.075;
+								system.ball.speed_factor = 0.20;
+								options_meshes_diff_v.updateMeshes("NORMAL");
+							}
+							options_meshes_diff_v.playAnimations();
 						}
-						options_meshes_diff_v.playAnimations();
 					}
 				}
 
-				if (PlayerInput.right || confirm_pushed) {
-					SoundPlayer.play(MENU_PUSH);
-					if (options_cursor_pos == 0) {
-						if (confirm_pushed)	confirm_pushed = false;
-						if        (system.score_to_win == 10) {
-							system.score_to_win = 15;
-							options_meshes_stw_v.updateMeshes("15");
-						} else if (system.score_to_win == 15) {
-							system.score_to_win = 20;
-							options_meshes_stw_v.updateMeshes("20");
-						} else if (system.score_to_win == 20) {
-							system.score_to_win = 25;
-							options_meshes_stw_v.updateMeshes("25");
-						} else if (system.score_to_win == 25) {
-							system.score_to_win = 30;
-							options_meshes_stw_v.updateMeshes("30");
-						} else if (system.score_to_win == 30) {
-							system.score_to_win = 5;
-							options_meshes_stw_v.updateMeshes("5");
-						} else if (system.score_to_win == 5 ) {
-							system.score_to_win = 10;
-							options_meshes_stw_v.updateMeshes("10");
-						}
-						options_meshes_stw_v.playAnimations();
-					} else if (options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
-						if (confirm_pushed)		confirm_pushed = false;
-						if        (system.difficulty == 0.15) {
-							system.difficulty        = 0.08;
-							system.ball.init_speed   = 0.055;
-							system.ball.speed_limit  = 0.085;
-							system.ball.speed_factor = 0.25;
-							options_meshes_diff_v.updateMeshes("HARD");
-						} else if (system.difficulty == 0.08) {
-							system.difficulty        = 0.00;
-							system.ball.init_speed   = 0.06;
-							system.ball.speed_limit  = 0.10;
-							system.ball.speed_factor = 0.30;
-							options_meshes_diff_v.updateMeshes("EXPERT");
-						} else if (system.difficulty == 0.00) {
-							system.difficulty        = 0.20;
-							system.ball.init_speed   = 0.045;
-							system.ball.speed_limit  = 0.060;
-							system.ball.speed_factor = 0.15;
-							options_meshes_diff_v.updateMeshes("EASY");
-						} else if (system.difficulty == 0.20) {
-							system.difficulty        = 0.15;
-							system.ball.init_speed   = 0.05;
-							system.ball.speed_limit  = 0.075;
-							system.ball.speed_factor = 0.20;
-							options_meshes_diff_v.updateMeshes("NORMAL");
-						}
-						options_meshes_diff_v.playAnimations();
-					}
-				}
-
-				if (confirm_pushed) {
+				if (confirm_pushed || mouse_hovered && PlayerInput.mouse_left) {
 					SoundPlayer.play(MENU_PUSH);
 					confirm_pushed  	= false;
 					var no_reset:Bool = false;
@@ -1011,14 +1125,6 @@ class UserInterface {
 				par_color.setFrom(par_start_color);
 			}
 			return par_color.clone();
-		} else if (link == "colon_color") {
-			var color :Vec4 = null;
-			if (system.game_state == RESULT) {
-				color = new Vec4(1.0, 1.0, 1.0);
-			} else if (system.game_state == MENU) {
-				color = new Vec4(0.4, 0.4, 0.4);
-			}
-			return color;
 		} else if (link == "colon_color") {
 			var color :Vec4 = null;
 			if (system.game_state == RESULT) {

@@ -1,5 +1,6 @@
 package arm;
 
+import iron.App;
 import haxe.ds.Vector;
 import iron.object.MeshObject;
 import iron.Scene;
@@ -18,13 +19,24 @@ class MeshText {
 	public var width		:Float;
 	public var scale		:Float;
 	public var animations	:Array<MeshTextAnimation>	= [];
+	public var selectable	:Bool						= false;
+	public var visible		:Bool						= true;
+	public var area_x_l		:Float						= 0.0;
+	public var area_x_r		:Float						= 0.0;
+	public var area_y_b		:Float						= 0.0;
+	public var area_y_t		:Float						= 0.0;
+	public var window_w		:Float						= 0.0;
+	public var window_h		:Float						= 0.0;		
 
-	public function new(text:String, position:Vec4, scale:Float=1.0, width:Float=0.45, material:String = "") {
+	public function new(text:String, position:Vec4, scale:Float=1.0, width:Float=0.45, material:String = "", selectable:Bool=false) {
 		this.text		= text.toUpperCase();
 		this.scale		= scale;
 		this.position	= position;
 		this.width		= width;
 		this.material	= material;
+		this.selectable	= selectable;
+		window_w = App.w();
+		window_h = App.h();
 		constructMeshes(material);
 	}
 
@@ -80,6 +92,23 @@ class MeshText {
 		}
 		for (a in animations) {
 			a.init();
+		}
+		if (selectable) {
+			area_x_l = ((meshes[0].transform.loc.x - meshes[0].transform.dim.x/2 + 3.4 ) / 6.8) * window_w;
+			area_x_r = ((meshes[meshes.length-1].transform.loc.x + meshes[meshes.length-1].transform.dim.x/2 + 3.4) / 6.8) * window_w;
+			area_y_b = ((-meshes[0].transform.loc.y - meshes[0].transform.dim.y/2 + 2.55) / 5.1) * window_h;
+			area_y_t = ((-meshes[0].transform.loc.y + meshes[0].transform.dim.y/2 + 2.55) / 5.1) * window_h;
+		}
+	}
+
+	public function checkHovered():Bool {
+		if (!selectable || !visible)	return false;
+
+		if (PlayerInput.mouse_pointer.x > area_x_l && PlayerInput.mouse_pointer.x < area_x_r &&
+			PlayerInput.mouse_pointer.y > area_y_b && PlayerInput.mouse_pointer.y < area_y_t) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -145,6 +174,7 @@ class MeshText {
 	}
 
 	public function setVisible(visable:Bool) {
+		this.visible = visable;
 		for (mesh in meshes) {
 			mesh.visible = visable;
 		}

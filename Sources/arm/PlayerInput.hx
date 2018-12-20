@@ -1,5 +1,6 @@
 package arm;
 
+import iron.math.Vec2;
 import iron.system.Input;
 
 class PlayerInput {
@@ -21,7 +22,15 @@ class PlayerInput {
 	static public var left				:Bool;
 	static public var right				:Bool;
 
-	static var keyboard					:Keyboard;				// keybord reference	
+	static public var mouse_left		:Bool;
+	static public var mouse_right		:Bool;
+	static public var mouse_middle		:Bool;
+	static public var mouse_pointer		:Vec2;
+	static public var mouse_moved		:Bool;
+	static public var mouse_y_speed		:Float;
+
+	static var keyboard					:Keyboard;				// keybord reference
+	static var mouse					:Mouse;	
 	static var init_completed			:Bool		= false;	// init completed?
 	static var timer_escape				:Timer;
 	static var timer_confirm			:Timer;
@@ -32,6 +41,8 @@ class PlayerInput {
 	*/
 	static function init() {
 		if (keyboard == null)	keyboard	= Input.getKeyboard();
+		if (mouse == null)		mouse		= Input.getMouse();
+		mouse_pointer	= new Vec2();
 		timer_escape    = new Timer(0.2);
 		timer_confirm   = new Timer(0.2);
 		timer_direction = new Timer(0.15);
@@ -39,12 +50,25 @@ class PlayerInput {
 		init_completed = true;
 	}
 
+
 	static public function update() {
 		if (!init_completed) init();
 
-		timer_escape.update();
-		timer_confirm.update();
+		timer_escape   .update();
+		timer_confirm  .update();
 		timer_direction.update();
+
+		mouse_pointer.x	= mouse.x;
+		mouse_pointer.y	= mouse.y;
+		mouse_moved = mouse.moved;
+		mouse_y_speed = -mouse.movementY / 150;
+		if (mouse.started("left"  ))	mouse_left   = true;
+		else							mouse_left   = false;
+		if (mouse.started("right" ))	mouse_right  = true;
+		else							mouse_right  = false;
+		if (mouse.started("middle"))	mouse_middle = true;
+		else							mouse_middle = false;	
+		
 
 		key_up_1		= keyboard.down("w");
 		key_down_1		= keyboard.down("s"); 
