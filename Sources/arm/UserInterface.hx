@@ -122,7 +122,7 @@ class UserInterface {
 												new Vec4(-2.60,  0.4, 1.0), 0.3, 0.5, "MTR_tips" );
 		disclaimer_3			= new MeshText("TO BE USED COMERCIALLY.",        
 												new Vec4(-2.60, -0.2, 1.0), 0.3, 0.5, "MTR_tips" );
-		disclaimer_4			= new MeshText("2019, MILO H XU",        
+		disclaimer_4			= new MeshText("2018, MILO H XU",        
 												new Vec4( 0.60, -0.8, 1.0), 0.3, 0.5, "MTR_tips" );
 		cursor					= Scene.active.getMesh("cursor");
 		border_up				= Scene.active.getMesh("border_up");

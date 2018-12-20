@@ -70,9 +70,9 @@ class SystemTrait extends Trait {
 	}
 
 
-	public function registerPlayer(p:PlayerTrait):Int {
+	public function registerPlayer(p:PlayerTrait, pos:Int) {
 		scores.push(0);
-		return players.push(p) - 1;
+		players[pos] = p;
 	}
 
 	public function registerBall(b:BallTrait) {

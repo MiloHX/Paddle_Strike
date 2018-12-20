@@ -77,29 +77,31 @@ class SoundPlayer {
 	static public function play(sound:SoundEffect, ?vol:Float) {
 		switch sound {
 			case MENU_HOVER:
-				audio_channel = Audio.play(sound_hover);
+				if (sound_hover != null)	audio_channel = Audio.play(sound_hover);
 			case MENU_PUSH:
-				audio_channel = Audio.play(sound_push);
+				if (sound_push != null)		audio_channel = Audio.play(sound_push);
 			case TITLE_DROP:
-				audio_channel = Audio.play(sound_drop);
+				if (sound_drop != null)		audio_channel = Audio.play(sound_drop);
 			case BALL_HIT_LEFT:
-				audio_channel = Audio.play(sound_hit_left);
+				if (sound_hit_left != null)	audio_channel = Audio.play(sound_hit_left);
 			case BALL_HIT_RIGHT:
-				audio_channel = Audio.play(sound_hit_right);
+				if (sound_hit_right != null)audio_channel = Audio.play(sound_hit_right);
 			case BALL_HIT_WALL:
-				audio_channel = Audio.play(sound_wall);
+				if (sound_wall != null) 	audio_channel = Audio.play(sound_wall);
 			case SCORE_UPDATE:
-				audio_channel = Audio.play(sound_score);
+				if (sound_score != null) 	audio_channel = Audio.play(sound_score);
 			case RESULT_SHOW:
-				audio_channel = Audio.play(sound_result);
+				if (sound_result != null) 	audio_channel = Audio.play(sound_result);
 			case TITLE_THEME:
-				if (audio_ch_title == null)	{
-					audio_ch_title = Audio.play(sound_theme, true);
-				} else {
-					audio_ch_title.play();
+				if (sound_theme != null) {
+					if (audio_ch_title == null)	{
+						audio_ch_title = Audio.play(sound_theme, true);
+					} else {
+						audio_ch_title.play();
+					}
 				}
 			case KICK_OFF:
-				audio_channel = Audio.play(sound_kick_off);
+				if (sound_kick_off != null) audio_channel = Audio.play(sound_kick_off);
 		}
 		if (vol != null) {
 			audio_channel.volume = vol;

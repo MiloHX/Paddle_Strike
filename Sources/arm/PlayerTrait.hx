@@ -32,7 +32,13 @@ class PlayerTrait extends Trait {
 
 		notifyOnInit(function() {
 			system = Scene.active.getTrait(SystemTrait);
-			player_ID = system.registerPlayer(this);
+			if (object.transform.worldx() < 0) {
+				system.registerPlayer(this, 0);
+				player_ID = 0;
+			} else {
+				system.registerPlayer(this, 1);
+				player_ID = 1;				
+			}
 			visual = Scene.active.getMesh("player_visual_" + player_ID);
 			if (player_ID == 0) {
 				indicator = new MeshText("...PLAYER 1", 
