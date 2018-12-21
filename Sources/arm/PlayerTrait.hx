@@ -70,7 +70,7 @@ class PlayerTrait extends Trait {
 				updateVisual();
 				updateHitAnimation();
 				updateIndicator();
-				if (PlayerInput.mouse_moved && player_ID == 0) {
+				if (PlayerInput.mouse_moved && player_ID == 0 && system.game_type != CPU_VS_CPU) {
 					movePlayerWithMouse();
 				} else {
 					getPlayerSpeed();
