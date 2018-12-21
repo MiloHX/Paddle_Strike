@@ -550,29 +550,15 @@ class UserInterface {
 					mouse_hovered = true;
 					mouse_hovered_lr = true;				
 				} else if (options_meshes_start.checkHovered()) {
-					if (system.game_type != TWO_PLAYER) {
-						if (options_cursor_pos != 2 && PlayerInput.mouse_moved) {
-							options_cursor_pos =  2;
-							cursor_moved = true;
-						}
-					} else {
-						if (options_cursor_pos != 1 && PlayerInput.mouse_moved) {
-							options_cursor_pos =  1;
-							cursor_moved = true;
-						}						
+					if (options_cursor_pos != 2 && PlayerInput.mouse_moved) {
+						options_cursor_pos =  2;
+						cursor_moved = true;
 					}
 					mouse_hovered = true;	
 				} else if (options_meshes_cancel.checkHovered()) {
-					if (system.game_type != TWO_PLAYER) {
-						if (options_cursor_pos != 3 && PlayerInput.mouse_moved) {
-							options_cursor_pos =  3;
-							cursor_moved = true;
-						}
-					} else {
-						if (options_cursor_pos != 2 && PlayerInput.mouse_moved) {
-							options_cursor_pos =  2;
-							cursor_moved = true;
-						}						
+					if (options_cursor_pos != 3 && PlayerInput.mouse_moved) {
+						options_cursor_pos =  3;
+						cursor_moved = true;
 					}
 					mouse_hovered = true;	
 				} 
@@ -600,60 +586,33 @@ class UserInterface {
 
 				switch options_cursor_pos {
 					case 0:		setCursor(true, new Vec4(-1.9,  0.0, 1.0));
-								if (system.game_type != TWO_PLAYER) {
-									if (cursor_moved) {
-										options_meshes_stw   .playAnimations ();
-										options_meshes_diff  .resetAnimations();
-										options_meshes_cancel.resetAnimations();
-									}
-								} else {
-									if (cursor_moved) {
-										options_meshes_stw   .playAnimations ();
-										options_meshes_cancel.resetAnimations();
-										options_meshes_start .resetAnimations();
-									}									
-								}
-					case 1: 	if (system.game_type != TWO_PLAYER) {
-									setCursor(true, new Vec4(-1.9, -0.4, 1.0));
-									if (cursor_moved) {
-										options_meshes_diff .playAnimations ();
-										options_meshes_stw  .resetAnimations();
-										options_meshes_start.resetAnimations();	
-									}
-								} else {
-									setCursor(true, new Vec4(-1.9, -0.6, 1.0));
-									if (cursor_moved) {
-										options_meshes_start .playAnimations ();
-										options_meshes_stw   .resetAnimations();
-										options_meshes_cancel.resetAnimations();	
-									}
-								}			
-					case 2: 	if (system.game_type != TWO_PLAYER) {
-									setCursor(true, new Vec4(-1.9, -1.0, 1.0));
-									if (cursor_moved) {
-										options_meshes_start .playAnimations ();
-										options_meshes_diff  .resetAnimations();
-										options_meshes_cancel.resetAnimations();
-									}
-								} else {
-									setCursor(true, new Vec4(-1.9, -1.0, 1.0));
-									if (cursor_moved) {
-										options_meshes_cancel.playAnimations ();
-										options_meshes_stw   .resetAnimations();
-										options_meshes_start .resetAnimations();
-									}
-								}
-					case 3: 	if (system.game_type != TWO_PLAYER) {
-									setCursor(true, new Vec4(-1.9, -1.4, 1.0));
-									if (cursor_moved) {
-										options_meshes_cancel.playAnimations ();
-										options_meshes_start .resetAnimations();
-										options_meshes_stw   .resetAnimations();
-									}	
+								if (cursor_moved) {
+									options_meshes_stw   .playAnimations ();
+									options_meshes_diff  .resetAnimations();
+									options_meshes_cancel.resetAnimations();
+								}			 	
+					case 1:		setCursor(true, new Vec4(-1.9, -0.4, 1.0));
+								if (cursor_moved) {
+									options_meshes_diff .playAnimations ();
+									options_meshes_stw  .resetAnimations();
+									options_meshes_start.resetAnimations();	
+								}		
+					case 2: 	setCursor(true, new Vec4(-1.9, -1.0, 1.0));
+								if (cursor_moved) {
+									options_meshes_start .playAnimations ();
+									options_meshes_diff  .resetAnimations();
+									options_meshes_cancel.resetAnimations();
+								} 
+					case 3: 	
+								setCursor(true, new Vec4(-1.9, -1.4, 1.0));
+								if (cursor_moved) {
+									options_meshes_cancel.playAnimations ();
+									options_meshes_start .resetAnimations();
+									options_meshes_stw   .resetAnimations();
 								}			
 				}
 
-				if (options_cursor_pos == 0 || options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
+				if (options_cursor_pos == 0 || options_cursor_pos == 1) {
 					if (PlayerInput.left || mouse_hovered_lr && PlayerInput.mouse_left) {
 						SoundPlayer.play(MENU_PUSH);
 						if (options_cursor_pos == 0) {
@@ -677,7 +636,7 @@ class UserInterface {
 								options_meshes_stw_v.updateMeshes("10");
 							}
 							options_meshes_stw_v.playAnimations();
-						} else if (options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
+						} else if (options_cursor_pos == 1) {
 							if        (system.difficulty == 0.15) {
 								system.difficulty        = 0.20;
 								system.ball.init_speed   = 0.045;
@@ -731,7 +690,7 @@ class UserInterface {
 								options_meshes_stw_v.updateMeshes("10");
 							}
 							options_meshes_stw_v.playAnimations();
-						} else if (options_cursor_pos == 1 && system.game_type != TWO_PLAYER) {
+						} else if (options_cursor_pos == 1) {
 							if (confirm_pushed)		confirm_pushed = false;
 							if        (system.difficulty == 0.15) {
 								system.difficulty        = 0.08;
@@ -769,29 +728,14 @@ class UserInterface {
 					var no_reset:Bool = false;
 					switch options_cursor_pos {
 						case 0: no_reset = true;
-						case 1:	if (system.game_type != TWO_PLAYER) {
-									no_reset = true;
-								} else {
-									system.reset();
-									system.start_game();
-									SoundPlayer.stopTitleTheme();
-									switchToInGame();
-									options_cursor_pos = 0;									
-								}
-						case 2: if (system.game_type != TWO_PLAYER) {
-									system.reset();
-									system.start_game();
-									SoundPlayer.stopTitleTheme();
-									switchToInGame();
-									options_cursor_pos = 0;
-								} else {
-									switchToTitle();
-									options_cursor_pos = 0;									
-								}
-						case 3: if (system.game_type != TWO_PLAYER) {
-									switchToTitle();
-									options_cursor_pos = 0;
-								} 
+						case 1:	no_reset = true;								
+						case 2: system.reset();
+								system.start_game();
+								SoundPlayer.stopTitleTheme();
+								switchToInGame();
+								options_cursor_pos = 0;
+						case 3: switchToTitle();
+								options_cursor_pos = 0;
 					}
 					options_meshes_stw   .resetAnimations();
 					options_meshes_stw_v .resetAnimations();
@@ -919,18 +863,10 @@ class UserInterface {
 
 	static function switchToOption() {
 		system.game_state = OPTIONS;
-		if (system.game_type != TWO_PLAYER) {
-			options_meshes_start .updateMeshes("START",   new Vec4(-1.50, -1.0, 1.0));
-			options_meshes_cancel.updateMeshes("CANCEL",  new Vec4(-1.50, -1.4, 1.0));
-			option_itm_count = 4;
-			options_cursor_pos = 2;
-		} else {
-			options_meshes_start .updateMeshes("START",   new Vec4(-1.50, -0.6, 1.0));
-			options_meshes_cancel.updateMeshes("CANCEL",  new Vec4(-1.50, -1.0, 1.0));
-			option_itm_count = 3;
-			options_cursor_pos = 1;
-		}
-		
+		options_meshes_start .updateMeshes("START",   new Vec4(-1.50, -1.0, 1.0));
+		options_meshes_cancel.updateMeshes("CANCEL",  new Vec4(-1.50, -1.4, 1.0));
+		option_itm_count = 4;
+		options_cursor_pos = 2;
 		setTitleObjectsVisibility(false);
 		setMenuObjectsVisibility(false);
 		setGameObjectsVisibility(false);
@@ -979,13 +915,8 @@ class UserInterface {
 		options_meshes_title .setVisible(vis);
 		options_meshes_stw   .setVisible(vis);
 		options_meshes_stw_v .setVisible(vis);
-		if (system.game_type != TWO_PLAYER) {
-			options_meshes_diff  .setVisible(vis);
-			options_meshes_diff_v.setVisible(vis);
-		} else {
-			options_meshes_diff  .setVisible(false);
-			options_meshes_diff_v.setVisible(false);			
-		}
+		options_meshes_diff  .setVisible(vis);
+		options_meshes_diff_v.setVisible(vis);
 		options_meshes_start .setVisible(vis);
 		options_meshes_cancel.setVisible(vis);
 	}
