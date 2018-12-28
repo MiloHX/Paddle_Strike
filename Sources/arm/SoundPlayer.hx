@@ -103,7 +103,7 @@ class SoundPlayer {
 			case KICK_OFF:
 				if (sound_kick_off != null) audio_channel = Audio.play(sound_kick_off);
 		}
-		if (vol != null) {
+		if (vol != null && audio_channel != null) {
 			audio_channel.volume = vol;
 		}
 	}

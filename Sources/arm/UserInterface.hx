@@ -57,6 +57,7 @@ class UserInterface {
 	static var disclaimer_2			:MeshText;
 	static var disclaimer_3			:MeshText;
 	static var disclaimer_4			:MeshText;
+	static var disclaimer_5			:MeshText;
 
 	static var cursor				:MeshObject;
 
@@ -74,7 +75,6 @@ class UserInterface {
 	static var init_completed		:Bool		= false;	// init completed?
 
 	static var timer				:Timer;
-	static var timer_disc			:Timer;
 
 	static var title_sound_played	:Bool;
 	static var result_sound_played	:Bool;
@@ -83,7 +83,6 @@ class UserInterface {
 	static function init() {
 		system  = Scene.active.getTrait(SystemTrait);
 		timer	= new Timer(1.0);
-		timer_disc = new Timer(5.0);
 		highlight_score_color	= new Vec4(1.0, 1.0, 0.0);
 		result_score_color		= new Vec4(1.0, 1.0, 1.0);
 		default_score_color		= new Vec4(0.4, 0.4, 0.4);
@@ -117,13 +116,15 @@ class UserInterface {
 		options_meshes_cancel  	= new MeshText("CANCEL",        new Vec4(-1.50, -1.4, 1.0), 0.4, 0.5, "MTR_option", true);
 
 		disclaimer_1			= new MeshText("THIS GAME IS CREATED FOR LEARNING AND",        
-												new Vec4(-2.60,  1.0, 1.0), 0.3, 0.5, "MTR_tips" );
+												new Vec4(-2.60,  1.5, 1.0), 0.3, 0.5, "MTR_tips" );
 		disclaimer_2			= new MeshText("TESTING PURPOSE. IT IS NOT INTENDED ",        
-												new Vec4(-2.60,  0.4, 1.0), 0.3, 0.5, "MTR_tips" );
+												new Vec4(-2.60,  0.9, 1.0), 0.3, 0.5, "MTR_tips" );
 		disclaimer_3			= new MeshText("TO BE USED COMERCIALLY.",        
-												new Vec4(-2.60, -0.2, 1.0), 0.3, 0.5, "MTR_tips" );
+												new Vec4(-2.60,  0.3, 1.0), 0.3, 0.5, "MTR_tips" );
 		disclaimer_4			= new MeshText("2018, MILO H XU",        
-												new Vec4( 0.60, -0.8, 1.0), 0.3, 0.5, "MTR_tips" );
+												new Vec4( 0.60, -0.3, 1.0), 0.3, 0.5, "MTR_tips" );
+		disclaimer_5			= new MeshText("PRESS ENTER TO CONTINUE",        
+												new Vec4( -1.60, -1.5, 1.0), 0.3, 0.5, "MTR_option" );
 		cursor					= Scene.active.getMesh("cursor");
 		border_up				= Scene.active.getMesh("border_up");
 		border_down				= Scene.active.getMesh("border_down");
@@ -186,7 +187,6 @@ class UserInterface {
 		setMenuObjectsVisibility(false);
 		setOptionsObjectsVisibility(false);
 		setResultObjectsVisibility(false);
-		timer_disc.start();
 	}
 
 	static public function update() {
@@ -202,7 +202,7 @@ class UserInterface {
 		var confirm_pushed = PlayerInput.confirm;
 
 		if (system.game_state == DISCLAIMER) {
-			if (timer_disc.update() || confirm_pushed || PlayerInput.mouse_left) {
+			if (confirm_pushed || PlayerInput.mouse_left) {
 				if (confirm_pushed) {
 					confirm_pushed = false;
 					SoundPlayer.play(MENU_PUSH);
@@ -211,6 +211,7 @@ class UserInterface {
 				disclaimer_2.setVisible(false);
 				disclaimer_3.setVisible(false);
 				disclaimer_4.setVisible(false);
+				disclaimer_5.setVisible(false);
 				switchToTitle();
 			} 
 
@@ -966,6 +967,8 @@ class UserInterface {
 					options_cursor_pos == 3 && object.transform.worldy() == -1.4   ) {
 					color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);
 				}
+			} else if (system.game_state == DISCLAIMER) {
+				color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);	
 			}
 			return color;
 
