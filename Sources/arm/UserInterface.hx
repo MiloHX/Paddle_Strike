@@ -957,25 +957,25 @@ class UserInterface {
 		} else if (link == "option_color") {
 			var color = new Vec4(0.3, 0.3, 0.3);
 			if (system.game_state == TITLE) {
-				if (title_cursor_pos == 0 && object.transform.worldy() ==  0.0 ||
-					title_cursor_pos == 1 && object.transform.worldy() == -0.4 ||
-					title_cursor_pos == 2 && object.transform.worldy() == -0.8 ||
-					title_cursor_pos == 3 && object.transform.worldy() == -1.4  ) {
+				if (title_cursor_pos == 0 && Utilities.compareMargin(object.transform.worldy(),   0.0, 0.01) ||
+					title_cursor_pos == 1 && Utilities.compareMargin(object.transform.worldy(),  -0.4, 0.01) ||
+					title_cursor_pos == 2 && Utilities.compareMargin(object.transform.worldy(),  -0.8, 0.01) ||
+					title_cursor_pos == 3 && Utilities.compareMargin(object.transform.worldy(),  -1.4, 0.01)  ) {
 					color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);
 				}
 			} else if (system.game_state == MENU) {
-				if (menu_cursor_pos == 0 && object.transform.worldy() ==  0.0 ||
-					menu_cursor_pos == 1 && object.transform.worldy() == -0.4 ||
-					menu_cursor_pos == 1 && object.transform.worldy() == -0.6 ||
-					menu_cursor_pos == 2 && object.transform.worldy() == -1.0   ) {
+				if (menu_cursor_pos == 0 && Utilities.compareMargin(object.transform.worldy(),  0.0, 0.01) ||
+					menu_cursor_pos == 1 && Utilities.compareMargin(object.transform.worldy(), -0.4, 0.01) ||
+					menu_cursor_pos == 1 && Utilities.compareMargin(object.transform.worldy(), -0.6, 0.01) ||
+					menu_cursor_pos == 2 && Utilities.compareMargin(object.transform.worldy(), -1.0, 0.01)   ) {
 					color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);
 				}
 			} else if (system.game_state == OPTIONS) {
-				if (options_cursor_pos == 0 && object.transform.worldy() ==  0.0 ||
-					options_cursor_pos == 1 && object.transform.worldy() == -0.4 ||
-					options_cursor_pos == 1 && object.transform.worldy() == -0.6 ||
-					options_cursor_pos == 2 && object.transform.worldy() == -1.0 ||
-					options_cursor_pos == 3 && object.transform.worldy() == -1.4   ) {
+				if (options_cursor_pos == 0 && Utilities.compareMargin(object.transform.worldy(),  0.0, 0.01) ||
+					options_cursor_pos == 1 && Utilities.compareMargin(object.transform.worldy(), -0.4, 0.01) ||
+					options_cursor_pos == 1 && Utilities.compareMargin(object.transform.worldy(), -0.6, 0.01) ||
+					options_cursor_pos == 2 && Utilities.compareMargin(object.transform.worldy(), -1.0, 0.01) ||
+					options_cursor_pos == 3 && Utilities.compareMargin(object.transform.worldy(), -1.4, 0.01)   ) {
 					color.set(Math.sin(4*t) * 0.2 + 0.7, Math.sin(4*t) * 0.2 + 0.7, 1.0);
 				}
 			} else if (system.game_state == DISCLAIMER) {
@@ -985,8 +985,8 @@ class UserInterface {
 
 		} else if (link == "setting_color") {
 			var color = new Vec4(0.6, 0.6, 0.6);
-			if (options_cursor_pos == 0 && object.transform.worldy() ==  0.0 ||
-				options_cursor_pos == 1 && object.transform.worldy() == -0.4  ) {
+			if (options_cursor_pos == 0 && Utilities.compareMargin(object.transform.worldy(),  0.0, 0.01) ||
+				options_cursor_pos == 1 && Utilities.compareMargin(object.transform.worldy(), -0.4, 0.01)  ) {
 				color.set(Math.sin(4*t) * 0.2 + 0.8, Math.sin(4*t) * 0.2 + 0.8, Math.sin(4*t) * 0.2 + 0.8);
 			}
 			return color;

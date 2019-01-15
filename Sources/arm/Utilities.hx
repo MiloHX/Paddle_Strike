@@ -84,4 +84,13 @@ class Utilities {
 		return Math.abs(a.x-b.x) < margin && Math.abs(a.y-b.y) < margin && Math.abs(a.z-b.z) < margin;
 	}
 
+	/**
+	 * compare a with b, if the difference within margin, it will return true. otherwise return false.
+	 * @param a float to be compared
+	 * @param b float to be compared
+	 * @return  if difference within margin, return true, otherwise return false
+	 */
+	public static inline function compareMargin(a:FastFloat, b:FastFloat, margin:FastFloat):Bool {
+		return Math.abs(a-b) < margin;
+	}
 }

@@ -1,5 +1,5 @@
 /**
-* Name:			UTLTimer.hx                       
+* Name:			Timer.hx                       
 * Description:	Count down timer for Armory 
 * Author:		Milo Hao XU / MiloGameWorks (milo.h.xu@gmail.com)
 * Date:			20Jan2018                                                        
