@@ -79,6 +79,10 @@ class UserInterface {
 	static var title_sound_played	:Bool;
 	static var result_sound_played	:Bool;
 
+	static var enter_title			:Bool;
+	static var enter_options		:Bool;
+	static var enter_menu			:Bool;
+
 
 	static function init() {
 		system  = Scene.active.getTrait(SystemTrait);
@@ -310,10 +314,11 @@ class UserInterface {
 
 			switch title_cursor_pos {
 				case 0:	setCursor(true, new Vec4(-1.1,  0.0, 1.0));
-						if (cursor_moved) {
+						if (cursor_moved || enter_title) {
 							title_meshes_1_player.playAnimations ();
 							title_meshes_2_player.resetAnimations();
 							title_meshes_exit    .resetAnimations();
+							enter_title = false;
 						}
 				case 1: setCursor(true, new Vec4(-1.1, -0.4, 1.0));
 						if (cursor_moved) {
@@ -429,10 +434,11 @@ class UserInterface {
 				switch menu_cursor_pos {
 					case 0:		setCursor(true, new Vec4(-0.9,  0.0, 1.0));
 								if (system.game_ongoing) {
-									if (cursor_moved) {
+									if (cursor_moved || enter_menu) {
 										menu_meshes_resume .playAnimations  ();
 										menu_meshes_restart.resetAnimations();
 										menu_meshes_exit   .resetAnimations();
+										enter_menu =false;
 									}
 								} else {
 									if (cursor_moved) {
@@ -532,6 +538,7 @@ class UserInterface {
 			if (menu_pushed) {
 				menu_pushed    = false;
 				switchToTitle();
+				options_cursor_pos = 0;
 			} else {
 				var cursor_moved  = false;
 				var mouse_hovered = false;
@@ -599,10 +606,11 @@ class UserInterface {
 									options_meshes_start.resetAnimations();	
 								}		
 					case 2: 	setCursor(true, new Vec4(-1.9, -1.0, 1.0));
-								if (cursor_moved) {
+								if (cursor_moved || enter_options) {
 									options_meshes_start .playAnimations ();
 									options_meshes_diff  .resetAnimations();
 									options_meshes_cancel.resetAnimations();
+									enter_options = false;
 								} 
 					case 3: 	
 								setCursor(true, new Vec4(-1.9, -1.4, 1.0));
@@ -812,6 +820,7 @@ class UserInterface {
 		for (p in system.players)	p.setVisible(false);
 		system.ball.setVisible(false);
 		setCursor(true);
+		enter_menu = true;
 	}
 
 	static function switchToTitle() {
@@ -823,6 +832,7 @@ class UserInterface {
 		setOptionsObjectsVisibility(false);
 		setCursor(true);
 		title_sound_played = false;
+		enter_title = true;
 	}
 
 	static public function switchToResult() {
@@ -835,15 +845,15 @@ class UserInterface {
 			}
 		} else if (system.game_type == TWO_PLAYER) {
 			if (system.winner_ID == 0) {
-				result_meshes_result.updateMeshes("PLAYER 1 WIN!", new Vec4(-2.30,  0.2, 1.0), 0.8, 0.5, "MTR_title");
+				result_meshes_result.updateMeshes("PLAYER 1 WINS!", new Vec4(-2.50,  0.2, 1.0), 0.8, 0.5, "MTR_title");
 			} else {
-				result_meshes_result.updateMeshes("PLAYER 2 WIN!", new Vec4(-2.30,  0.2, 1.0), 0.8, 0.5, "MTR_title");
+				result_meshes_result.updateMeshes("PLAYER 2 WINS!", new Vec4(-2.50,  0.2, 1.0), 0.8, 0.5, "MTR_title");
 			}			
 		} else {
 			if (system.winner_ID == 0) {
-				result_meshes_result.updateMeshes("CPU 1 WIN!", new Vec4(-1.70,  0.2, 1.0), 0.8, 0.5, "MTR_title");
+				result_meshes_result.updateMeshes("CPU 1 WINS!", new Vec4(-1.90,  0.2, 1.0), 0.8, 0.5, "MTR_title");
 			} else {
-				result_meshes_result.updateMeshes("CPU 2 WIN!", new Vec4(-1.70,  0.2, 1.0), 0.8, 0.5, "MTR_title");
+				result_meshes_result.updateMeshes("CPU 2 WINS!", new Vec4(-1.90,  0.2, 1.0), 0.8, 0.5, "MTR_title");
 			}			
 		}
 		setTitleObjectsVisibility(false);
@@ -873,6 +883,7 @@ class UserInterface {
 		setGameObjectsVisibility(false);
 		setResultObjectsVisibility(false);
 		setOptionsObjectsVisibility(true);
+		enter_options = true;
 	}
 
 	static function setGameObjectsVisibility(vis:Bool) {
